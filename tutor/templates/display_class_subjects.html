@@ -1,0 +1,29 @@
+<table class="posts" border="1">
+
+<h2></h2>
+<thead>
+<tr>
+    <caption><h3>Lista de Assuntos</h3></caption>
+    <th>Título</th>
+    <th>Inicial?</th>
+    <th>Anterior</th>
+    <th>Posterior</th>
+    <th colspan="3" >Gerenciamento</th>
+</tr>
+</thead>
+  {% for row in cs %}
+    <tr>
+    	<td>{{ row.cs.title }}</td>
+        <td align="center">{{ "Sim" if row.cs.initial == "True" else "Não" }}</td>
+        <td align="center">{{ row.ps_title if row.ps_title != None else "-" }}</td>
+        <td align="center">{{ row.ns_title if row.ns_title != None else "-" }}</td>
+        <td align="center"><a href="{{ url_for('open_edit_class_subject', title=row.cs.title, cc=cc) }}">Alterar</a></td>
+        <td align="center"><a href="{{ url_for('confirm_delete_class_subject', cs_title=row.cs.title, cc_title=cc) }}">Excluir</a></td>
+        <td align="center"><a href="{{ url_for('open_questions', cs_title=row.cs.title, cc_title=cc) }}">Ver questões do assunto</a><br></td>
+    </tr>
+  {% else %}
+      <tr>
+          <td colspan="4">Nenhum assunto cadastrado para esta disciplina ainda!</td>
+      </tr>
+  {% endfor %}
+  </table>

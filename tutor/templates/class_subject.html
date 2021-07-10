@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    {% if session.username %}
+    <h2>{{ cc }}</h2>
+    <form>
+        <dl>
+            <dt>Título do Assunto:</dt>
+            <dd><input type="text" size="30" name="subject_title"></dd>
+            <dt>Assunto anterior:</dt>
+            <dd>
+                <select name="previous_subject">
+                    <option value="">--  Nenhum assunto anterior --</option>
+                    {% for row in cs %}
+                        <option value="{{ row.cs.title }}">{{ row.cs.title }}</option>
+                    {% endfor %}
+                </select>
+            </dd>
+            <dt>Assunto posterior:</dt>
+            <dd>
+                <select name="next_subject">
+                    <option value="">-- Nenhum assunto posterior --</option>
+                    {% for row in cs %}
+                        <option value="{{ row.cs.title }}">{{ row.cs.title }}</option>
+                    {% endfor %}
+                </select>
+            </dd>
+            <dt>Material de apoio:</dt>
+            <dd><textarea name="support_material" cols="67" rows="3"></textarea></dd>
+            <input type="hidden" name="cc" value="{{ cc }}" />
+        </dl>
+        <input type="submit" class="button" formaction="{{ url_for('create_class_subject') }}" formmethod="post" value="Criar Novo Assunto">
+        <input type="submit" class="button" formaction="{{ url_for('open_course_class', user=session.username) }}" formmethod="post" id="cancel" value="Voltar">
+    </form>
+
+    {% include 'display_class_subjects.html' %}
+
+    {% endif %}
+
+{% endblock %}

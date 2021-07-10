@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <h2>Disciplinas Matriculadas</h2>
+
+        <table border="1" class="posts" name="course_class">
+        <thead>
+            <tr>
+                <th align="center">Título</th>
+                <th colspan="2" >Opções</th>
+            </tr>
+        </thead>
+
+        {% if scc != None %}
+            {% for row in scc %}
+                <tr>
+                    <td>{{ row.cc.title }}</td>
+                    <td align="center"><a href="{{ url_for('open_answer_questions', cc_title=row.cc.title, user=session.username) }}"> Responder </a></td>
+                    <td align="center"><a href="{# {{ url_for('open_class_subject', title=row.title) }} #}"> Trancar a Matrícula </a></td>
+                </tr>
+            {% endfor %}
+
+        {% else %}
+            <tr>
+                <td colspan="2">Matriculado(a) em nenhuma das Disciplinas!!!</td>
+            </tr>
+        {% endif %}
+
+    </table>
+
+
+    <table border="1" class="posts" name="course_class">
+        <h2>Disciplinas Disponíveis</h2>
+        <thead>
+            <tr>
+                <th align="center">Título</th>
+                <th colspan="2" >Opções</th>
+            </tr>
+        </thead>
+
+        {% if nscc != None %}
+            {% for row in nscc %}
+                <tr>
+                    <td>{{ row.cc.title }}</td>
+                    <td align="center"><a href="{{ url_for('enrollment_course_class', cc=row.cc.title, user=session.username) }}"> Matricular </a></td>
+                </tr>
+            {% endfor %}
+
+        {% else %}
+            <tr>
+                <td colspan="2">Matriculado(a) em todas as Disciplinas!!!</td>
+            </tr>
+        {% endif %}
+
+    </table>
+
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    {% if session.username %}
+    <h2>Questão de {{ cs }}</h2>
+    <form>
+{# Formulário para criar uma questão #}
+        <dl>
+            <dt>Título:</dt>
+            <dd><input type="text" size="30" name="question_title"></dd>
+            <dt>Material de Apoio:</dt>
+            <dd><textarea name="support_material" cols="67" rows="3"></textarea></dd>
+            <dt>Enunciado:</dt>
+            <dd><textarea name="question_body" cols="67" rows="3"></textarea></dd>
+            <dt>Alternativa A: <input type="radio" name="right_answer" value="a" checked><label>Resposta correta</label></dt>
+                <dd><textarea name="choice_a" cols="67" rows="1"></textarea>&nbsp;</dd>
+            <dt>Alternativa B: <input type="radio" name="right_answer" value="b" ><label>Resposta correta</label></dt>
+                <dd><textarea name="choice_b" cols="67" rows="1"></textarea></dd>
+            <dt>Alternativa C: <input type="radio" name="right_answer" value="c"><label>Resposta correta</label></dt>
+                <dd><textarea name="choice_c" cols="67" rows="1"></textarea></dd>
+            <dt>Alternativa D: <input type="radio" name="right_answer" value="d"><label>Resposta correta</label></dt>
+                <dd><textarea name="choice_d" cols="67" rows="1"></textarea></dd>
+            <dt>Nível de Dificuldade:</dt>
+            <dd>
+                <select name="difficulty">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </dd>
+            <input type="hidden" name="cs" value="{{ cs }}" />
+            <input type="hidden" name="cc" value="{{ cc }}" />
+        </dl>
+        <input type="submit" class="button" formaction="{{ url_for('create_question') }}" formmethod="post" value="Criar Nova Questão">
+        <input type="submit" class="button" formaction="{{ url_for('open_class_subject', title=cc) }}" FORMMETHOD="post" id="cancel" value="Voltar">
+    </form>
+
+    {% include 'display_questions.html' %}
+
+    {% endif %}
+
+{% endblock %}
