@@ -2,36 +2,58 @@
 {% block body %}
 
     {% if session.username %}
-    <h2>{{ cc }}</h2>
-    <form>
-        <dl>
-            <dt>Título do Assunto:</dt>
-            <dd><input type="text" size="30" name="subject_title"></dd>
-            <dt>Assunto anterior:</dt>
-            <dd>
-                <select name="previous_subject">
-                    <option value="">--  Nenhum assunto anterior --</option>
+      <h1 class="mb-3 fw-normal text-center">{{ cc }}</h1>
+      <div class="mb-4 text-center">
+        <button class="btn btn-lg btn-success shadow" id="add-course-class"
+                data-bs-toggle="collapse" data-bs-target="#container-add-class-subject">
+                <i class="bi bi-plus align-middle"></i>&nbsp; Adicionar assunto
+        </button>
+        <a class="btn btn-lg btn-secondary mx-2 shadow" href="{{ url_for('open_course_class') }}">
+            <i class="bi bi-arrow-left align-middle"></i>&nbsp; Voltar à lista de disciplinas
+        </a>
+      </div>
+
+      <div class="container text-center collapse multi-collapse mb-4" id="container-add-class-subject">
+        <main class="form rounded shadow">
+          <form class="needs-validation" action="{{ url_for('create_class_subject') }}" method="post" novalidate>
+            <h1 class="h3 mb-3 fw-normal">Novo assunto</h1>
+            <div class="form-floating mb-2">
+              <input type="text" class="form-control" id="floatingInput"
+                     placeholder="Assunto da disciplina" name="subject_title" required>
+              <label for="floatingInput">Assunto da disciplina</label>
+            </div>
+            <div class="form-floating mb-2">
+                <select name="previous_subject" class="form-select" aria-label="Assunto anterior">
+                    <option value="" selected>--  Nenhum assunto anterior --</option>
                     {% for row in cs %}
                         <option value="{{ row.cs.title }}">{{ row.cs.title }}</option>
                     {% endfor %}
                 </select>
-            </dd>
-            <dt>Assunto posterior:</dt>
-            <dd>
-                <select name="next_subject">
+                <label for="floatingInput">Assunto anterior</label>
+            </div>
+            <div class="form-floating mb-2">
+                <select name="next_subject" class="form-select" aria-label="Assunto posterior">
                     <option value="">-- Nenhum assunto posterior --</option>
                     {% for row in cs %}
                         <option value="{{ row.cs.title }}">{{ row.cs.title }}</option>
                     {% endfor %}
                 </select>
-            </dd>
-            <dt>Material de apoio:</dt>
-            <dd><textarea name="support_material" cols="67" rows="3"></textarea></dd>
+                <label for="floatingInput">Assunto posterior</label>
+            </div>
+            <div class="form-floating mb-3">
+                <textarea class="form-control h-100" id="floatingInput" rows="5"
+                       placeholder="Material de apoio" name="support_material"></textarea>
+                <label for="floatingInput">Material de apoio</label>
+            </div>
             <input type="hidden" name="cc" value="{{ cc }}" />
-        </dl>
-        <input type="submit" class="button" formaction="{{ url_for('create_class_subject') }}" formmethod="post" value="Criar Novo Assunto">
-        <input type="submit" class="button" formaction="{{ url_for('open_course_class', user=session.username) }}" formmethod="post" id="cancel" value="Voltar">
-    </form>
+            <button class="btn btn-lg btn-success mx-2" type="submit">
+                Criar novo assunto
+            </button>
+          </form>
+        </main>
+      </div>
+
+      <div class="dropdown-divider mb-5"></div>
 
     {% include 'display_class_subjects.html' %}
 

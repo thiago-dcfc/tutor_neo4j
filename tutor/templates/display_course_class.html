@@ -1,23 +1,41 @@
-    <h2></h2>
-    <table border="1" class="posts" name="course_class">
-        <thead>
-            <tr>
-                <caption><h3>Lista de Disciplinas</h3></caption>
-                <th align="center">Título</th>
-                <th colspan="3" align="center">Gerenciamento</th>
-            </tr>
-        </thead>
+<h2 class="text-center">Lista de Disciplinas</h2>
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <table class="table table-striped shadow align-middle" name="course_class">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Título</th>
+                    <th>Gerenciamento</th>
+                </tr>
+            </thead>
 
-        {% for row in cc %}
-            <tr>
-                <td>{{ row.cc.title }}</td>
-                <td><a href="{{ url_for('open_edit_course_class', title=row.cc.title) }}"> Alterar </a></td>
-                <td><a href="{{ url_for('confirm_delete_course_class', title=row.cc.title) }}"> Excluir </a></td>
-                <td><a href="{{ url_for('open_class_subject', title=row.cc.title) }}"> Ver Assuntos da Disciplina </a></td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">Nenhuma disciplina cadastrada ainda!!!</td>
-            </tr>
-        {% endfor %}
-    </table>
+            <tbody>
+            {% for row in cc %}
+                <tr>
+                    <td>{{ row.cc.title }}</td>
+                    <td class="text-center">
+                        <a class="btn btn-info btn-sm shadow-sm me-2"
+                           href="{{ url_for('open_class_subject', title=row.cc.title) }}">
+                            <i class="bi bi-eye-fill align-middle"></i>
+                        </a>
+                        <a class="btn btn-success btn-sm shadow-sm mx-2"
+                           href="{{ url_for('open_edit_course_class', title=row.cc.title) }}">
+                            <i class="bi bi-pencil-square align-middle"></i>
+                        </a>
+                        <a class="btn btn-danger btn-sm shadow-sm ms-2 delete-course-class"
+                            href="{{ url_for('delete_course_class', title=row.cc.title) }}">
+                            <i class="bi bi-x-lg align-middle"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">Nenhuma disciplina cadastrada ainda!</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-2"></div>
+</div>

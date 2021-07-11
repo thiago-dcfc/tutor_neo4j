@@ -1,26 +1,41 @@
-body            { font-family: sans-serif; background: #eee; }
-a, h1, h3       { color: #377ba8; }
-h1, h2, h3      { font-family: 'Georgia', serif; margin: 0; }
-h1, h2          { border-bottom: 2px solid #eee; padding: 3px; }
-h3              { padding: 3px; }
-dd              { display: block; margin-left: 0px; }
-dl              { font-weight: bold; }
-h2              { text-align: center; }
-th, td          { padding: 5px; }
+body{
+    background: whitesmoke !important;
+}
 
-/*#save           { float: right; }*/
-#cancel         { float: right; margin-left: 19px; }
-#initial        { float: left; font-size: 1em; color: #377ba8; }
+.form-signin {
+    width: 100%;
+    max-width: 430px;
+    padding: 15px;
+    margin: auto;
+    background-color: white;
+  }
+  
+.form-signin .checkbox {
+    font-weight: 400;
+}
 
-.session        { display: inline-block; }
-.button form    { display: inline; }
-a:visited 		{ color: #800080; }
-.checkbox       { text-align: right; }
-.page           { margin: 2em auto; width: 50em; border: 5px solid #ccc; padding: 0.8em; background: white; }
-.posts          { list-style: none; margin: 0; padding: 0; }
-.posts li       { margin: 0.8em 1.2em; }
-.posts li h2    { margin-left: -1em; }
-.metanav        { text-align: right; font-size: 1em; padding: 0.3em; margin-bottom: 0.5em; background: #fafafa; }
-.flash          { background: #cee5F5; padding: 0.5em; border: 1px solid #aacbe2; }
-.error   q      { background: #f0d6d6; padding: 0.5em; }
-.orientation    { float: right; margin-right: 690px; margin-top: 1px; font-size: 0.8em; color: #377ba8; }
+.form-signin .form-floating:focus-within {
+    z-index: 2;
+}
+
+.form-signin input[type="text"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-color: darkgray;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: -1px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-color: darkgray;
+}
+
+.form {
+    width: 100%;
+    max-width: 630px;
+    padding: 15px;
+    margin: auto;
+    background-color: white;
+  }

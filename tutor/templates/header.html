@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid container">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <i class="bi bi-clipboard-check"></i> &nbsp;Tutor Neo4J
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+              data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" 
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{{ url_for('index') }}">Home</a>
+          </li>
+          {% if not session.username %}
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/register' %}active{% endif %}" href="{{ url_for('register') }}">Cadastrar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/login' %}active{% endif %}" href="{{ url_for('login') }}">Entrar</a>
+            </li>
+          {% else %}
+            {% if session.type == 'teacher' %}
+                <li class="nav-item">
+                    <a class="nav-link {% if '/open_course_class' in request.path %}active{% endif %}" href="{{ url_for('open_course_class') }}">Cursos e Disciplinas</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link {% if '/open_course_class_student' in request.path %}active{% endif %}" href="{{ url_for('open_course_class_student') }}">Disciplinas</a>
+                </li>
+            {% endif %}
+          {% endif %}
+        </ul>
+
+        {% if session.username %}
+        <ul class="navbar-nav d-flex">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i>&nbsp;&nbsp;{{ session.person_name }}
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">Perfil</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">Sair &nbsp;<i class="bi bi-door-closed"></i></a>
+            </li>
+        </ul>
+        {% endif %}        
+      </div>
+    </div>
+  </nav>

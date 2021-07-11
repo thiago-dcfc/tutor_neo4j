@@ -2,17 +2,34 @@
 {% block body %}
 
     {% if session.username %}
-    <h2>Disciplina</h2>
-    <form action="{{ url_for('create_course_class') }}" method="post">
-        <dl>
-            <dt>Título:</dt>
-            <dd><input type="text" size="30" name="title"></dd>
-        </dl>
-        <input type="hidden" name="username" value="{{ session.username }}" />
-        <input type="submit" value="Criar Nova Disciplina">
-    </form>
+        <h1 class="mb-3 fw-normal text-center">Minhas disciplinas</h1>
 
-    {% include 'display_course_class.html' %}
+        <div class="mb-4 text-center">
+            <button class="btn btn-lg btn-success shadow" id="add-course-class"
+                    data-bs-toggle="collapse" data-bs-target="#container-add-course-class">
+                    <i class="bi bi-plus align-middle"></i>&nbsp; Adicionar disciplina
+            </button>
+        </div>
+
+        <div class="container text-center collapse multi-collapse mb-4" id="container-add-course-class">
+            <main class="form-signin rounded shadow">
+              <form class="needs-validation" action="{{ url_for('create_course_class') }}" method="post" novalidate>
+                <h1 class="h3 mb-3 fw-normal">Nova disciplina</h1>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingInput"
+                         placeholder="Nome da disciplina" name="title" required>
+                  <label for="floatingInput">Nome da disciplina</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-success mt-3" type="submit">
+                    Criar nova disciplina
+                </button>
+              </form>
+            </main>
+        </div>
+
+        <div class="dropdown-divider mb-5"></div>
+
+        {% include 'display_course_class.html' %}
 
     {% endif %}
 

@@ -1,25 +1,40 @@
-
-<h2></h2>
-<table class="posts" border="1">
-<thead>
-<tr>
-    <caption><h3>Lista de Questões</h3></caption>
-    <th>Título</th>
-    <th>Dificuldade</th>
-    <th colspan="3" align="center">Gerenciamento</th>
-</tr>
-</thead>
-
-  {% for row in q %}
-    <tr>
-    	<td>{{ row.q.title }}</td>
-        <td align="center">{{ row.q.difficulty }}</td>
-        <td align="center"><a href="{{ url_for('open_edit_questions', question_id=row.q.id, cs_title=cs, cc_title=cc) }}">Alterar</a></td>
-        <td align="center"><a href="{{ url_for('confirm_delete_question', id=row.q.id, cc=cc, cs=cs) }}">Excluir</a></td>
-    </tr>
-  {% else %}
-      <tr>
-    	<td colspan="4">Nenhuma questão para este assunto ainda!</td>
-    </tr>
-  {% endfor %}
-  </table>
+<h2 class="text-center">Lista de Questões</h2>
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <table class="table table-striped shadow align-middle">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Título</th>
+                <th>Dificuldade</th>
+                <th>Gerenciamento</th>
+            </tr>
+        </thead>
+        {% for row in q %}
+            <tr>
+                <td>{{ row.q.title }}</td>
+                <td class="text-center">{{ row.q.difficulty }}</td>
+                <td class="text-center">
+                    <a class="btn btn-info btn-sm shadow-sm me-2"
+                       href="#">
+                        <i class="bi bi-eye-fill align-middle"></i>
+                    </a>
+                    <a class="btn btn-success btn-sm shadow-sm mx-2"
+                       href="{{ url_for('open_edit_questions', cc_title=cc, cs_title=cs, question_id=row.q.id) }}">
+                        <i class="bi bi-pencil-square align-middle"></i>
+                    </a>
+                    <a class="btn btn-danger btn-sm shadow-sm ms-2 delete-question"
+                        href="{{ url_for('delete_question', cc=cc, cs=cs, id=row.q.id) }}">
+                        <i class="bi bi-x-lg align-middle"></i>
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3" class="text-center">Nenhuma questão para este assunto ainda!</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div class="col-2"></div>
+</div>

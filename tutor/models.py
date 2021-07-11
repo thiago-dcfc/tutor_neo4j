@@ -1,5 +1,6 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from datetime import datetime
+from bcrypt import checkpw
 import uuid
 
 graph = Graph("http://localhost:7474", auth=("neo4j", "admin"))
@@ -32,75 +33,75 @@ class Person:
     def verify_password(self, password):
         user = self.find()
         if user:
-            if password == user['password']:
+            if checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
                 return user
             else:
                 return False
         else:
             return False
 
-    def add_post(self, title, tags, text):
-        user = self.find()
-        post = Node(
-            'Post',
-            id=str(uuid.uuid4()),
-            title=title,
-            text=text,
-            timestamp=timestamp(),
-            date=date()
-        )
-        rel = Relationship(user, 'PUBLISHED', post)
-        graph.create(rel)
+    # def add_post(self, title, tags, text):
+    #     user = self.find()
+    #     post = Node(
+    #         'Post',
+    #         id=str(uuid.uuid4()),
+    #         title=title,
+    #         text=text,
+    #         timestamp=timestamp(),
+    #         date=date()
+    #     )
+    #     rel = Relationship(user, 'PUBLISHED', post)
+    #     graph.create(rel)
 
-        tags = [x.strip() for x in tags.lower().split(',')]
-        for name in set(tags):
-            tag = Node("Tag", name=name)
-            # graph.merge(tag, "Tag", "name")
+    #     tags = [x.strip() for x in tags.lower().split(',')]
+    #     for name in set(tags):
+    #         tag = Node("Tag", name=name)
+    #         # graph.merge(tag, "Tag", "name")
 
-            rel = Relationship(tag, 'TAGGED', post)
-            graph.create(rel)
+    #         rel = Relationship(tag, 'TAGGED', post)
+    #         graph.create(rel)
 
-    def like_post(self, post_id):
-        user = self.find()
-        post = matcher.match('Post', id=post_id).first()
-        graph.merge(Relationship(user, 'LIKED', post))
+    # def like_post(self, post_id):
+    #     user = self.find()
+    #     post = matcher.match('Post', id=post_id).first()
+    #     graph.merge(Relationship(user, 'LIKED', post))
 
-    def get_recent_posts(self):
-        query = '''
-        MATCH (user:User)-[:PUBLISHED]->(post:Post)<-[:TAGGED]-(tag:Tag)
-        WHERE user.username = $username
-        RETURN post, COLLECT(tag.name) AS tags
-        ORDER BY post.timestamp DESC LIMIT 5
-        '''
-        return graph.run(query, username=self.username)
+    # def get_recent_posts(self):
+    #     query = '''
+    #     MATCH (user:User)-[:PUBLISHED]->(post:Post)<-[:TAGGED]-(tag:Tag)
+    #     WHERE user.username = $username
+    #     RETURN post, COLLECT(tag.name) AS tags
+    #     ORDER BY post.timestamp DESC LIMIT 5
+    #     '''
+    #     return graph.run(query, username=self.username)
 
-    def get_similar_users(self):
-        # Find three users who are most similar to the logged-in user
-        # based on tags they've both blogged about.
-        query = '''
-        MATCH (you:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
-              (they:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
-        WHERE you.username = $username AND you <> they
-        WITH they, COLLECT(DISTINCT tag.name) AS tags
-        ORDER BY SIZE(tags) DESC LIMIT 3
-        RETURN they.username AS similar_user, tags
-        '''
+    # def get_similar_users(self):
+    #     # Find three users who are most similar to the logged-in user
+    #     # based on tags they've both blogged about.
+    #     query = '''
+    #     MATCH (you:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
+    #           (they:User)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
+    #     WHERE you.username = $username AND you <> they
+    #     WITH they, COLLECT(DISTINCT tag.name) AS tags
+    #     ORDER BY SIZE(tags) DESC LIMIT 3
+    #     RETURN they.username AS similar_user, tags
+    #     '''
 
-        return graph.run(query, username=self.username)
+    #     return graph.run(query, username=self.username)
 
-    def get_commonality_of_user(self, other):
-        # Find how many of the logged-in user's posts the other user
-        # has liked and which tags they've both blogged about.
-        query = '''
-        MATCH (they:User {username: $they })
-        MATCH (you:User {username: $you })
-        OPTIONAL MATCH (they)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
-                       (you)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
-        RETURN SIZE((they)-[:LIKED]->(:Post)<-[:PUBLISHED]-(you)) AS likes,
-               COLLECT(DISTINCT tag.name) AS tags
-        '''
+    # def get_commonality_of_user(self, other):
+    #     # Find how many of the logged-in user's posts the other user
+    #     # has liked and which tags they've both blogged about.
+    #     query = '''
+    #     MATCH (they:User {username: $they })
+    #     MATCH (you:User {username: $you })
+    #     OPTIONAL MATCH (they)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag:Tag),
+    #                    (you)-[:PUBLISHED]->(:Post)<-[:TAGGED]-(tag)
+    #     RETURN SIZE((they)-[:LIKED]->(:Post)<-[:PUBLISHED]-(you)) AS likes,
+    #            COLLECT(DISTINCT tag.name) AS tags
+    #     '''
 
-        return graph.run(query, they=other.username, you=self.username).next
+    #     return graph.run(query, they=other.username, you=self.username).next
 
 
 class CourseClass:
@@ -124,12 +125,20 @@ class CourseClass:
         cc = matcher.match("CourseClass", title=title).first()
         return cc
 
+    def find_by_user(self, title, user):
+        query = '''
+                    MATCH (p:Person {username: $user})-[r:CREATED]->(cc:CourseClass {title: $title})
+                    RETURN cc
+                '''
+        cc = graph.run(query, user=user, title=title).evaluate()
+        return cc
+
     def create(self, title, username):
-        if not self.find(title):
+        if not self.find_by_user(title, username):
             user = Person(username).find()
             cc = Node("CourseClass", title=title)
             graph.create(cc)
-            graph.merge(Relationship(cc, 'CREATED', user))
+            graph.merge(Relationship(user, 'CREATED', cc))
             return True
         else:
             return False
@@ -275,7 +284,6 @@ class ClassSubject:
 
     def create(self, course_class, title, ps, ns, support_material):
         if not self.find_in_course(course_class, title).evaluate():
-
             cc = CourseClass().find(course_class)
 
             fscc = CourseClass().find_single_course_class(course_class)
@@ -296,7 +304,6 @@ class ClassSubject:
             if ns:
                 next_subject = self.find_in_course(course_class, ns).evaluate()
                 graph.merge(Relationship(cs, 'FORWARD', next_subject))
-
             return True
         else:
             return False
@@ -400,6 +407,16 @@ class ClassSubject:
         cc = graph.run(query, title=title)
         return cc
 
+    def get_class_subjects_and_course_class_except_current_subject(self, title, st):
+        query = '''
+                MATCH (cs:ClassSubject)-[:TAUGHT]->(cc:CourseClass)
+                WHERE cc.title = $title AND cs.title <> $st
+                RETURN cs, cc
+                '''
+
+        cc = graph.run(query, title=title, st=st)
+        return cc
+
     # Retorna o id do Assunto initial da Disciplina
     def get_id_class_subjects(self, cc_title):
         query = '''
@@ -415,7 +432,7 @@ class ClassSubject:
                  MATCH (cs:ClassSubject)-[:TAUGHT]->(cc:CourseClass {title: $title})
                  OPTIONAL MATCH (cs)-[:FORWARD]->(ns:ClassSubject)
                  OPTIONAL MATCH (cs)-[:PREVIOUS]->(ps:ClassSubject)
-                 RETURN cs,  ns.title as ns_title, ps.title as ps_title
+                 RETURN cs, ns.title as ns_title, ps.title as ps_title
                  ORDER BY cs.order
                 '''
 

@@ -1,13 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}
-
-  {% if session.username %}
-    <h2>Olá, {{ 'Professor' if session.type == 'teacher' else 'Aluno' }}</h2>
-    <h3>Utilize os menus acima para executar funções</h3>
-
-  {% else %}
-    <h2>Olá, Visitante</h2>
-    <h3>Por favor, realize o login</h3>
-  {% endif %}
-
+  <div class="p-5 mb-4 bg-light border rounded-3 shadow">
+    <div class="container-fluid py-5">
+      <h1 class="display-5 fw-bold">Tutor Utilizando Base de Dados em Grafo</h1>
+      {% if session.username %}
+        <p class="col-md-8 fs-4">{{ 'Professor' if session.type == 'teacher' else 'Aluno' }}, utilize os menus acima para executar funções</p>
+      {% else %}
+        <p class="col-md-8 fs-4">Olá, Visitante! Por favor, realize o login ou cadastre-se!</p>
+        <a class="btn btn-success btn-lg align-middle shadow" href="{{ url_for('login') }}">
+          Entrar <i class="bi bi-arrow-up"></i>
+        </a>
+        <a class="btn btn-primary btn-lg align-middle shadow" href="{{ url_for('login') }}">
+          Cadastrar <i class="bi bi-arrow-right"></i>
+        </a>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

@@ -1,17 +1,30 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h2>Registro de Aluno</h2>
-	<form action="{{ url_for('register') }}" method="post">
-        <dl>
-            <dt>Nome:</dt>
-            <dd><input type="text" name="name" value="{{ name }}"></dd>
-            <dt>Usuário:</dt>
-            <dd><input type="text" name="username" value="{{ username }}"></dd>
-            <dt>Senha:</dt>
-            <dd><input type="password" name="password"></dd>
-            <dt>Confirmar Senha:</dt>
-            <dd><input type="password" name="confirm_password"></dd>
-        </dl>
-        <input type="submit" value="Register">
-	</form>
+  <div class="container text-center">
+    <main class="form-signin rounded shadow">
+      <form class="needs-validation"  action="{{ url_for('register') }}" method="post" novalidate>
+        <h1 class="h3 mb-3 fw-normal">Registro de Aluno</h1>
+        <div class="form-floating">
+          <input type="text" class="form-control" id="floatingInput" value="{{ name }}"
+                 placeholder="Nome completo" name="name" required>
+          <label for="floatingInput">Nome completo</label>
+        </div>
+        <div class="form-floating">
+          <input type="text" class="form-control" id="floatingInput" value="{{ username }}"
+                 placeholder="Nome de usuário" name="username" required>
+          <label for="floatingInput">Usuário</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Senha" name="password" required>
+          <label for="floatingPassword">Senha</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingPassword" 
+                 placeholder="Confirme a senha" name="confirm_password" required>
+          <label for="floatingPassword">Confirmação de senha</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Entrar</button>
+      </form>
+    </main>
+  </div>
 {% endblock %}
