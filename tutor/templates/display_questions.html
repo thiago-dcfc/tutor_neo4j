@@ -1,8 +1,8 @@
 <h2 class="text-center">Lista de Questões</h2>
 <div class="row">
-    <div class="col-2"></div>
-    <div class="col-8">
-        <table class="table table-striped shadow align-middle">
+    <div class="col-1"></div>
+    <div class="col-10">
+        <table class="table table-striped table-bordered shadow align-middle">
         <thead class="table-dark text-center">
             <tr>
                 <th>Título</th>
@@ -10,23 +10,25 @@
                 <th>Gerenciamento</th>
             </tr>
         </thead>
-        {% for row in q %}
+        {% for row in questions %}
             <tr>
                 <td>{{ row.q.title }}</td>
                 <td class="text-center">{{ row.q.difficulty }}</td>
                 <td class="text-center">
-                    <a class="btn btn-info btn-sm shadow-sm me-2"
-                       href="#">
-                        <i class="bi bi-eye-fill align-middle"></i>
-                    </a>
-                    <a class="btn btn-success btn-sm shadow-sm mx-2"
-                       href="{{ url_for('open_edit_questions', cc_title=cc, cs_title=cs, question_id=row.q.id) }}">
-                        <i class="bi bi-pencil-square align-middle"></i>
-                    </a>
-                    <a class="btn btn-danger btn-sm shadow-sm ms-2 delete-question"
-                        href="{{ url_for('delete_question', cc=cc, cs=cs, id=row.q.id) }}">
-                        <i class="bi bi-x-lg align-middle"></i>
-                    </a>
+                    <form action="{{ url_for('delete_question', cc_identity=course_class['id'], cs_identity=class_subject['id'], question_identity=row.q.id) }}"
+                                      method="post">
+                        <!--a class="btn btn-info btn-sm shadow-sm m-1"
+                           href="#">
+                            <i class="bi bi-eye-fill align-middle"></i>
+                        </a-->
+                        <a class="btn btn-success btn-sm shadow-sm m-1"
+                           href="{{ url_for('edit_question', cc_identity=course_class['id'], cs_identity=class_subject['id'], question_identity=row.q.id) }}">
+                            <i class="bi bi-pencil-square align-middle"></i>
+                        </a>
+                        <button class="btn btn-danger btn-sm shadow-sm m-1 delete-question" type="submit">
+                            <i class="bi bi-x-lg align-middle"></i>
+                        </button>
+                    </form>
                 </td>
             </tr>
         {% else %}
@@ -36,5 +38,5 @@
         {% endfor %}
         </table>
     </div>
-    <div class="col-2"></div>
+    <div class="col-1"></div>
 </div>

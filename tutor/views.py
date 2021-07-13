@@ -1,52 +1,62 @@
 from .models import Person, CourseClass, ClassSubject, Question, Answer
-from flask import Flask, request, session, redirect, url_for, render_template, flash
+from flask import Flask, request, session, redirect, url_for, render_template, flash, abort
 from bcrypt import hashpw, gensalt
 from os import urandom
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
 
-# TODO #1 editar informações do próprio perfil
-# TODO #2 terminar parte da resposta do aluno
+
+# TODO #0 validar email no registro e alteração do perfil
+# TODO #1 terminar parte do aluno
+# TODO #2 o que vai ter no Ver Perfil?
 # TODO #3 criar cursos. só admin pode criar cursos. disciplinas ligadas a um curso. professor pode estar ligado a vários cursos.
-# TODO #4 colocar algo na tela principal do professor. últimas respostas? algum gráfico?
-# TODO #5 colocar algo na tela principal do estudante. últimas respostas? perguntas/assuntos que outras pessoas da mesma turma estão respondendo?
-# TODO #6 revisar todas as rotas. não deixar entrar nas rotas que não pode.
-# TODO #7 papel e funções de administrador. adicionar professores? manipular dados de outras pessoas?
+# TODO #4 limpar código. retirar funções legadas do exemplo
+# TODO #5 colocar algo na tela principal do professor. últimas respostas? algum gráfico?
+# TODO #6 colocar algo na tela principal do estudante. últimas respostas? perguntas/assuntos que outras pessoas da mesma turma estão respondendo?
+# TODO #7 revisar todas as rotas. não deixar entrar nas rotas que não pode.
+# TODO #8 papel e funções de administrador. adicionar professores? manipular dados de outras pessoas?
+# TODO #9 dockerizar
+
 
 @app.route('/')
 def index():
     # session['username'] = 'sirlon'
+    # session['person_name'] = 'Sirlon'
+    # session['email'] = 'sirlon@sirlon.com'
     # session['type'] = 'teacher'
     return render_template('index.html')
 
 
-# REGISTRO, LOGIN E LOGOUT #
+################################
+#   REGISTER, LOGIN E LOGOUT   #
+################################
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         name = request.form['name']
         username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
         p_type = "student"
         hashed = hashpw(password.encode('utf-8'), gensalt())
 
-        if not Person(username).confirm_passwords(password, confirm_password):
+        if not confirm_passwords(password, confirm_password):
             flash('As senhas não são iguais', 'error')
         elif Person(username).find():
             flash('Nome de usuário já existente', 'error')
-        elif Person(username).register(name, hashed.decode('utf-8'), p_type):
+        elif Person(username).register(name, hashed.decode('utf-8'), email, p_type):
             session['username'] = username
             session['person_name'] = name
+            session['email'] = email
             session['type'] = p_type
             flash('Cadastro efetuado com sucesso.', 'success')
             return redirect(url_for('index'))
-        
+
         return render_template('register.html',
-                                   name=name,
-                                   username=username
-                                   )
+                               name=name,
+                               username=username)
 
     return render_template('register.html')
 
@@ -66,333 +76,407 @@ def login():
                 session['username'] = username
                 session['type'] = user['type']
                 session['person_name'] = user['name']
+                session['email'] = user['email']
                 flash('Login efetuado com sucesso.', 'success')
-
-                # if user['type'] == 'student':
-                # chamar funções das duas listas
-                # return render_template('index.html, param=param)
-
                 return redirect(url_for('index'))
 
     return render_template('login.html')
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET'])
 def logout():
-    session.pop('username', None)
-    flash('Você saiu do sistema.', 'success')
+    if session:
+        session.pop('username', None)
+        session.clear()
+        flash('Você saiu do sistema.', 'success')
     return redirect(url_for('index'))
 
 
-# COURSE CLASS #
-@app.route('/enrollment_course_class/<cc>')
-def enrollment_course_class(cc):
-    if not is_student():
-        return redirect(url_for('login'))
+#
+# User's Profile
+#
+@app.route('/profile/')
+@app.route('/profile/<username>')
+def profile(username=None):
+    logged_in()
 
-    user = session.get('username')
-    if not CourseClass().enrollment(cc, user):
-        flash('Erro ao matricular-se Disciplina', 'error')
+    if not username:
+        username = session.get('username')
+    user = Person(username).find()
+
+    # vendo o próprio perfil
+    if username == session.get('username'):
+        if user['type'] == 'teacher':
+            classes = CourseClass().get_course_classes(user['username'])
+
+            return render_template('profile.html', user=user, classes=classes)
     else:
-        flash('Matrícula realizada com sucesso.', 'success')
+        return render_template('profile.html', user=user)
 
-    return redirect(url_for('open_course_class_student',
-                            user=user))
+    return render_template('profile.html', user=user)
 
 
-@app.route('/edit_course_class', methods=['GET', 'POST'])
-def edit_course_class():
-    if not is_teacher():
-        return redirect(url_for('login'))
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    logged_in()
 
-    if request.method == 'POST':
-        cc = request.form['cc']
-        title = request.form['new_title']
+    user = Person(session.get('username')).find()
+    if request.method == 'GET':
+        return render_template('edit_profile.html',
+                               name=user['name'],
+                               username=user['username'],
+                               email=user['email'])
+    elif request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        if password:
+            if confirm_passwords(password, confirm_password):
+                hashed = hashpw(password.encode('utf-8'), gensalt())
+                if not Person(session.get('username')).change_password(hashed.decode('utf-8')):
+                    flash('Erro ao alterar a senha', 'error')
+                    return render_template('edit_profile.html',
+                                           name=name,
+                                           username=user['username'],
+                                           email=email)
+            else:
+                flash('As senhas não são iguais', 'error')
+                return render_template('edit_profile.html',
+                                       name=name,
+                                       username=user['username'],
+                                       email=email)
 
-        if cc == title:
-            flash('Disciplina alterada com sucesso.', 'success')
-        elif not CourseClass().edit(title, cc, session.get('username')):
-            flash('Disciplina já existente', 'error')
-            return render_template(
-                'edit_course_class.html',
-                cc=cc
-            )
+        if Person(session.get('username')).edit_personal_data(name, email):
+            session['person_name'] = name
+            session['email'] = email
+            flash('Dados alterados com sucesso', 'success')
         else:
-            flash('Disciplina alterada com sucesso.', 'success')
+            flash('Erro ao alterar os dados', 'error')
+            return render_template('edit_profile.html',
+                                   name=name,
+                                   username=user['username'],
+                                   email=email)
 
-    course_classes = list(CourseClass().get_course_classes(session.get('username')))
-    return render_template(
-        'course_class.html',
-        cc=course_classes
-    )
-
-
-@app.route('/open_edit_course_class/<title>')
-def open_edit_course_class(title):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    return render_template(
-        'edit_course_class.html',
-        cc=title
-    )
+        return redirect(url_for('edit_profile'))
 
 
-@app.route('/open_course_class')
-def open_course_class():
-    if not is_teacher():
-        return redirect(url_for('login'))
+####################
+#   COURSE CLASS   #
+####################
 
-    course_classes = list(CourseClass().get_course_classes(session.get('username')))
-    return render_template(
-        'course_class.html',
-        cc=course_classes
-    )
+#
+# List and Create Course Classes for Teachers
+#
+@app.route('/course_classes', methods=['GET', 'POST'])
+def course_classes():
+    is_teacher()
 
-
-@app.route('/open_course_class_student')
-def open_course_class_student():
-    if not is_student():
-        return redirect(url_for('login'))
-
-    user = session.get('username')
-    student_course_classes = CourseClass().get_student_course_classes(user)
-    no_student_course_classes = CourseClass().get_no_student_course_classes(user)
-
-    return render_template(
-        'course_class_student.html',
-        scc=student_course_classes,
-        nscc=no_student_course_classes
-    )
-
-
-@app.route('/create_course_class', methods=['GET', 'POST'])
-def create_course_class():
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
+    if request.method == 'GET':
+        users_course_classes = list(CourseClass().get_course_classes(session.get('username')))
+        return render_template(
+            'course_class.html',
+            course_classes=users_course_classes
+        )
+    elif request.method == 'POST':
         title = request.form['title']
         username = session.get('username')
 
         if len(title) < 1:
             flash('A Disciplina deve possuir pelo menos 1 caractere', 'error')
-        elif not CourseClass().create(title, username):
-            flash('Disciplina já existente', 'error')
-        else:
+        elif CourseClass().create(title, username):
             flash('Disciplina criada com sucesso.', 'success')
+        else:
+            flash('Disciplina já existente', 'error')
 
-    return redirect(request.referrer)
-
-
-@app.route('/confirm_delete_course_class/<title>')
-def confirm_delete_course_class(title):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    return render_template(
-        'confirm_delete_course_class.html',
-        cc=title
-    )
+        return redirect(request.referrer)
 
 
-@app.route('/delete_course_class/<title>', methods=['GET', 'POST'])
-def delete_course_class(title):
-    if not is_teacher():
-        return redirect(url_for('login'))
+#
+# Edit Course Classes
+#
+@app.route('/edit_course_class/<cc_identity>', methods=['GET', 'POST'])
+def edit_course_class(cc_identity):
+    is_teacher()
 
-    if not CourseClass().find_single_course_class(title):
-        flash('A Disciplina contém assunto, não pode ser excluida.', 'error')
+    course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
+    if course_class:
+        if request.method == 'GET':
+            return render_template('edit_course_class.html', course_class=course_class)
+        elif request.method == 'POST':
+            new_title = request.form['new_title']
+
+            if course_class['title'] == new_title or CourseClass().edit(cc_identity, new_title,
+                                                                        session.get('username')):
+                flash('Disciplina alterada com sucesso.', 'success')
+                return redirect(url_for('course_classes'))
+            else:
+                flash('Disciplina já existente', 'error')
+                return render_template('edit_course_class.html', course_class=course_class)
+    abort(404)
+
+
+#
+# Delete Course Classes
+#
+@app.route('/delete_course_class/<cc_identity>', methods=['POST'])
+def delete_course_class(cc_identity):
+    is_teacher()
+
+    if not CourseClass().find_no_relationship_course_class_and_subject(cc_identity):
+        flash('A Disciplina não pode ser excluída, pois contém assuntos.', 'error')
     else:
-        CourseClass().delete(title)
-        flash('Disciplina excluida com sucesso.', 'success')
-
-    course_classes = list(CourseClass().get_course_classes(session.get('username')))
-    return render_template(
-        'course_class.html',
-        cc=course_classes
-    )
-
-# CLASS SUBJECT #
-@app.route('/edit_class_subject/', methods=['GET', 'POST'])
-def edit_class_subject():
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        cc = request.form['cc']
-        title = request.form['title']
-        st = request.form['subject_title']
-        ps = request.form['previous_subject']
-        ns = request.form['next_subject']
-        sm = request.form['support_material']
-        cb = request.form['checkbox_initial']
-
-        if not ClassSubject().edit(st, title, cc, ps, ns, sm, cb):
-            flash('Erro ao alterar assunto', 'error')
+        if CourseClass().delete(cc_identity):
+            flash('Disciplina excluída com sucesso.', 'success')
         else:
-            flash('Assunto alterado com sucesso.', 'success')
+            flash('Ocorreu algum erro ao tentar excluir a disciplina.', 'success')
 
-    return redirect(url_for('open_class_subject', title=cc))
-
-
-@app.route('/open_edit_class_subject/<cc>/<title>')
-def open_edit_class_subject(cc, title):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    class_subjects = list(ClassSubject().get_class_subjects_and_course_class_except_current_subject(cc, title))
-
-    cs = ClassSubject().find_in_course(cc, title)
-    ini = ClassSubject().get_initial_value(title, cc)
-
-    ps = ClassSubject().find_previous(title, cc)
-    ns = ClassSubject().find_next(title, cc)
-
-    return render_template(
-        'edit_class_subject.html',
-        cc=cc,
-        title=title,
-        ps=ps,
-        ns=ns,
-        cs=class_subjects,
-        support_material=cs.evaluate()["support_material"],
-        initial=ini
-    )
+    return redirect(url_for('course_classes'))
 
 
-@app.route('/open_class_subject/<title>', methods=['GET', 'POST'])
-def open_class_subject(title):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    class_subjects = list(ClassSubject().get_class_subjects_with_previous_and_forward(title))
-
-    return render_template(
-        'class_subject.html',
-        cc=title,
-        cs=class_subjects
-    )
-
-
-@app.route('/confirm_delete_class_subject/<cc_title>/<cs_title>')
-def confirm_delete_class_subject(cc_title, cs_title):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    flash('Tem certeza de deseja excluir esse assunto?', 'warning')
-
-    return render_template(
-        'confirm_delete_class_subject.html',
-        cc=cc_title,
-        cs=cs_title
-    )
-
-
-@app.route('/delete_class_subject/<cc_title>/<cs_title>', methods=['GET', 'POST'])
-def delete_class_subject(cc_title, cs_title):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    if not ClassSubject().find_single_class_subject(cs_title, cc_title):
-        flash('Assunto possui questões, não pode ser excluído.', 'error')
-    elif not ClassSubject().get_initial_value(cs_title, cc_title):
-        flash('Assunto inicial, não pode ser excluído.', 'error')
-    else:
-        ClassSubject().delete(cs_title, cc_title)
-        flash('Assunto excluído com sucesso.', 'success')
-
-    return redirect(url_for('open_class_subject', title=cc_title))
-
-
-@app.route('/create_class_subject', methods=['GET', 'POST'])
-def create_class_subject():
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        title = request.form['subject_title']
-        cc = request.form['cc']
-        support_material = request.form['support_material']
-        ps = request.form.get('previous_subject')
-        ns = request.form.get('next_subject')
-
-        if len(title) < 1:
-            flash('O assunto deve possuir pelo menos 1 caractere', 'error')
-        elif not ClassSubject().create(cc, title, ps, ns, support_material):
-            flash('Assunto já existente', 'error')
-        else:
-            flash('Assunto criado com sucesso.', 'success')
-
-    return redirect(request.referrer)
-
-
-# QUESTIONS #
-@app.route('/edit_question/<cc>/<cs>/<question_id>', methods=['GET', 'POST'])
-def edit_question(cc, cs, question_id):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        title = request.form['question_title']
-        body = request.form['question_body']
-        support_material = request.form['support_material']
-        difficulty = request.form['difficulty']
-        choice_a = request.form['choice_a']
-        choice_b = request.form['choice_b']
-        choice_c = request.form['choice_c']
-        choice_d = request.form['choice_d']
-        right_answer = request.form['right_answer']
-
-        if len(title) < 1:
-            flash('O título da questão deve possuir pelo menos 1 caractere', 'error')
-            return redirect(url_for('open_edit_questions', question_id=question_id, cs_title=cs, cc_title=cc))
-
-        else:
-            Question().edit(question_id, title, body, support_material, difficulty, choice_a, choice_b, choice_c,
-                            choice_d, right_answer)
-            flash('Questão alterado com sucesso.', 'success')
-            return redirect(url_for('open_questions', cs_title=cs, cc_title=cc))
-
-
-
-@app.route('/open_edit_questions/<cc_title>/<cs_title>/<question_id>')
-def open_edit_questions(cc_title, cs_title, question_id):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    question = Question().get_question(question_id).evaluate()
-
-    return render_template(
-        'edit_question.html',
-        cc=cc_title,
-        cs=cs_title,
-        q=question
-    )
-
-
-@app.route('/open_answer_questions/<cc_title>')
-def open_answer_questions(cc_title):
-    if not is_student():
-        return redirect(url_for('login'))
+#
+# List Course Classes for Students
+#
+@app.route('/open_course_class_student')
+def open_course_class_student():
+    is_student()
 
     user = session.get('username')
-    question = Question().get_current_question(cc_title, user).evaluate()
-    cs_title = ClassSubject().get_class_subject_current_question(cc_title, user).evaluate()
+    student_course_classes = CourseClass().get_student_course_classes(user)
+    no_student_course_classes = CourseClass().get_no_student_course_classes(user)
 
-    return render_template(
-        'answer_question.html',
-        cc=cc_title,
-        cs=cs_title,
-        q=question,
-        username=user
-    )
+    return render_template('course_class_student.html',
+                           scc=student_course_classes,
+                           nscc=no_student_course_classes)
+
+
+#
+# Enrollment on Course Classes
+#
+@app.route('/enrollment_course_class/<course_class>')
+def enrollment_course_class(course_class):
+    is_student()
+
+    user = session.get('username')
+    if not CourseClass().enrollment(course_class, user):
+        flash('Erro ao matricular-se Disciplina', 'error')
+    else:
+        flash('Matrícula realizada com sucesso.', 'success')
+
+    return redirect(url_for('open_course_class_student', user=user))
+
+
+#####################
+#   CLASS SUBJECT   #
+#####################
+
+#
+# List or Create Class Subjects
+#
+@app.route('/class_subjects/<cc_identity>', methods=['GET', 'POST'])
+def class_subjects(cc_identity):
+    is_teacher()
+
+    course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
+    if course_class:
+        if request.method == 'GET':
+            course_class_subjects = list(ClassSubject().get_class_subjects_with_previous_and_forward(cc_identity))
+
+            return render_template('class_subject.html',
+                                   course_class=course_class,
+                                   class_subjects=course_class_subjects)
+        elif request.method == 'POST':
+            subject_title = request.form['subject_title']
+            support_material = request.form['support_material']
+            previous_subject = request.form.get('previous_subject')
+            next_subject = request.form.get('next_subject')
+
+            if len(subject_title) < 1:
+                flash('O assunto deve possuir pelo menos 1 caractere', 'error')
+            elif ClassSubject().create(cc_identity, subject_title, previous_subject, next_subject, support_material):
+                flash('Assunto criado com sucesso.', 'success')
+            else:
+                flash('Assunto já existente', 'error')
+
+            return redirect(request.referrer)
+    abort(404)
+
+
+#
+# Edit Class Subjects
+#
+@app.route('/edit_class_subject/<cc_identity>/<cs_identity>', methods=['GET', 'POST'])
+def edit_class_subject(cc_identity, cs_identity):
+    is_teacher()
+
+    course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
+    class_subject = ClassSubject().find_in_course(cc_identity, cs_identity)
+    if course_class and class_subject:
+        if request.method == 'GET':
+            list_subjects = list(ClassSubject().get_class_subjects_and_course_class_except_current_subject(cc_identity,
+                                                                                                           cs_identity))
+            previous_subject = ClassSubject().find_previous(cc_identity, cs_identity)
+            next_subject = ClassSubject().find_next(cc_identity, cs_identity)
+
+            return render_template('edit_class_subject.html',
+                                   course_class=course_class,
+                                   class_subject=class_subject,
+                                   previous_subject=previous_subject,
+                                   next_subject=next_subject,
+                                   class_subjects=list_subjects)
+        elif request.method == 'POST':
+            subject_title = request.form['subject_title']
+            previous_subject = request.form['previous_subject']
+            next_subject = request.form['next_subject']
+            support_material = request.form['support_material']
+            initial = request.form['checkbox_initial']
+
+            if ClassSubject().edit(cc_identity, cs_identity, subject_title, previous_subject,
+                                   next_subject, support_material, initial):
+                flash('Assunto alterado com sucesso.', 'success')
+            else:
+                flash('Erro ao alterar assunto', 'error')
+
+            return redirect(url_for('class_subjects', cc_identity=cc_identity))
+    abort(404)
+
+
+#
+# Delete Class Subjects
+#
+@app.route('/delete_class_subject/<cc_identity>/<cs_identity>', methods=['POST'])
+def delete_class_subject(cc_identity, cs_identity):
+    is_teacher()
+
+    if not ClassSubject().find_single_class_subject(cc_identity, cs_identity):
+        flash('Assunto não pode ser excluído, pois possui questões.', 'error')
+    elif not ClassSubject().get_initial_value(cc_identity, cs_identity):
+        flash('Assunto não pode ser excluído, pois é o assunto inicial.', 'error')
+    else:
+        ClassSubject().delete(cc_identity, cs_identity)
+        flash('Assunto excluído com sucesso.', 'success')
+
+    return redirect(url_for('class_subjects', cc_identity=cc_identity))
+
+
+#################
+#   QUESTIONS   #
+#################
+
+#
+# List Questions
+#
+@app.route('/questions/<cc_identity>/<cs_identity>', methods=['GET', 'POST'])
+def questions(cc_identity, cs_identity):
+    is_teacher()
+
+    course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
+    class_subject = ClassSubject().find_in_course(cc_identity, cs_identity)
+    if course_class and class_subject:
+        if request.method == 'GET':
+            all_questions = list(Question().get_questions(cc_identity, cs_identity))
+
+            return render_template('question.html',
+                                   course_class=course_class,
+                                   class_subject=class_subject,
+                                   questions=all_questions)
+        elif request.method == 'POST':
+            title = request.form['question_title']
+            body = request.form['question_body']
+            choice_a = request.form['choice_a']
+
+            if len(title) < 1:
+                flash('O título deve possuir pelo menos 1 caractere', 'error')
+            elif len(body) < 1:
+                flash('O enuciado deve possuir pelo menos 1 caractere', 'error')
+            elif len(choice_a) < 1:
+                flash('A alternativa A deve possuir pelo menos 1 caractere', 'error')
+            elif Question().create(cc_identity, cs_identity, title, body,
+                                   request.form['support_material'], request.form['difficulty'],
+                                   choice_a, request.form['choice_b'],
+                                   request.form['choice_c'], request.form['choice_d'],
+                                   request.form['right_answer'], session["username"]):
+                flash('Questão criada com sucesso.', 'success')
+            else:
+                flash('Erro ao cadastrar questão', 'error')
+
+            return redirect(request.referrer)
+    abort(404)
+
+
+#
+# Edit Questions
+#
+@app.route('/edit_question/<cc_identity>/<cs_identity>/<question_identity>', methods=['GET', 'POST'])
+def edit_question(cc_identity, cs_identity, question_identity):
+    is_teacher()
+
+    course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
+    class_subject = ClassSubject().find_in_course(cc_identity, cs_identity)
+    question = Question().get_question(question_identity).evaluate()
+    if course_class and class_subject and question:
+        if request.method == 'GET':
+            return render_template('edit_question.html',
+                                   course_class=course_class,
+                                   class_subject=class_subject,
+                                   question=question)
+        elif request.method == 'POST':
+            title = request.form['question_title']
+            if len(title) < 1:
+                flash('O título da questão deve possuir pelo menos 1 caractere', 'error')
+                return redirect(url_for('edit_questions', cc_identity=cc_identity,
+                                        cs_identity=cs_identity,
+                                        question_identity=question_identity))
+            else:
+                if Question().edit(question_identity, title, request.form['question_body'],
+                                   request.form['support_material'], request.form['difficulty'],
+                                   request.form['choice_a'], request.form['choice_b'],
+                                   request.form['choice_c'], request.form['choice_d'],
+                                   request.form['right_answer']):
+                    flash('Questão alterada com sucesso.', 'success')
+                else:
+                    flash('Erro ao alterar questão.', 'error')
+                return redirect(url_for('questions', cc_identity=cc_identity,
+                                        cs_identity=cs_identity,
+                                        question_identity=question_identity))
+    abort(404)
+
+
+#
+# Delete Questions
+#
+@app.route('/delete_question/<cc_identity>/<cs_identity>/<question_identity>', methods=['POST'])
+def delete_question(cc_identity, cs_identity, question_identity):
+    is_teacher()
+
+    course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
+    class_subject = ClassSubject().find_in_course(cc_identity, cs_identity)
+    if course_class and class_subject and Question().delete(question_identity):
+        flash('Questão excluida com sucesso.', 'success')
+    else:
+        flash('Erro ao excluir questão.', 'error')
+
+    return redirect(url_for('questions', cc_identity=cc_identity, cs_identity=cs_identity))
+
+
+@app.route('/open_answer_questions/<cc_identity>')
+def open_answer_questions(cc_identity):
+    is_student()
+
+    user = session.get('username')
+    question = Question().get_current_question(cc_identity, user).evaluate()
+    cs_title = ClassSubject().get_class_subject_current_question(cc_identity, user).evaluate()
+
+    return render_template('answer_question.html',
+                           cc_identity=cc_identity,
+                           cs_title=cs_title,
+                           question=question,
+                           user=user)
 
 
 @app.route('/answer_question', methods=['GET', 'POST'])
 def answer_question():
-    if not is_student():
-        return redirect(url_for('login'))
+    is_student()
 
     if request.method == 'POST':
         title = request.form['title']
@@ -404,94 +488,17 @@ def answer_question():
         user = request.form['username']
         Answer().set_answer_question(alternative_answered, user)
 
-    if alternative_answered == right_answer:
-        flash('Acertou', 'success')
-    else:
-        flash('Errou', 'error')
-
-    return render_template(
-        'alert_question_answered.html',
-        cs_title=cs_title,
-        title=title,
-        body=body,
-        support_material=support_material,
-        username=user
-    )
-
-
-@app.route('/open_questions/<cc_title>/<cs_title>', methods=['GET', 'POST'])
-def open_questions(cc_title, cs_title):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    questions = list(Question().get_questions(cs_title, cc_title))
-
-    return render_template(
-        'question.html',
-        cs=cs_title,
-        cc=cc_title,
-        q=questions
-    )
-
-
-@app.route('/create_question', methods=['GET', 'POST'])
-def create_question():
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        cs = request.form['cs']
-        cc = request.form['cc']
-        title = request.form['question_title']
-        body = request.form['question_body']
-        support_material = request.form['support_material']
-        difficulty = request.form['difficulty']
-        choice_a = request.form['choice_a']
-        choice_b = request.form['choice_b']
-        choice_c = request.form['choice_c']
-        choice_d = request.form['choice_d']
-        right_answer = request.form['right_answer']
-
-        if len(title) < 1:
-            flash('O título deve possuir pelo menos 1 caractere', 'error')
-        elif len(body) < 1:
-            flash('O enuciado deve possuir pelo menos 1 caractere', 'error')
-        elif len(choice_a) < 1:
-            flash('A alternativa A deve possuir pelo menos 1 caractere', 'error')
-        elif not Question().create(cc, cs, title, body, support_material, difficulty, choice_a, choice_b, choice_c,
-                                   choice_d, right_answer,
-                                   session["username"]):
-            flash('Erro ao cadastrar questão', 'error')
+        if alternative_answered == right_answer:
+            flash('Acertou', 'success')
         else:
-            flash('Questão criada com sucesso.', 'success')
+            flash('Errou', 'error')
 
-    return redirect(request.referrer)
-
-
-@app.route('/confirm_delete_question/<cc>/<cs>/<id>')
-def confirm_delete_question(cc, cs, id):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    flash('Tem certeza que deseja excluir essa questão?', 'warning')
-
-    return render_template(
-        'confirm_delete_question.html',
-        id=id,
-        cc=cc,
-        cs=cs
-    )
-
-
-@app.route('/delete_question/<cc>/<cs>/<id>')
-def delete_question(cc, cs, id):
-    if not is_teacher():
-        return redirect(url_for('login'))
-
-    Question().delete(id)
-    flash('Questão excluida com sucesso.', 'success')
-
-    return redirect(url_for('open_questions', cs_title=cs, cc_title=cc))
+        return render_template('alert_question_answered.html',
+                               cs_title=cs_title,
+                               title=title,
+                               body=body,
+                               support_material=support_material,
+                               username=user)
 
 
 # MÉTODOS LEGADOS DO EXEMPLO #
@@ -527,57 +534,29 @@ def delete_question(cc, cs, id):
 #     return redirect(request.referrer)
 
 
-@app.route('/profile/<username>')
-def profile(username):
-    logged_in_username = session.get('username')
-    user_being_viewed_username = username
-
-    user_being_viewed = Person(user_being_viewed_username)
-    posts = user_being_viewed.get_recent_posts()
-
-    similar = []
-    common = []
-
-    if logged_in_username:
-        logged_in_user = Person(logged_in_username)
-
-        if logged_in_user.username == user_being_viewed.username:
-            similar = logged_in_user.get_similar_users()
-        else:
-            common = logged_in_user.get_commonality_of_user(user_being_viewed)
-
-    return render_template(
-        'profile.html',
-        username=username,
-        posts=posts,
-        similar=similar,
-        common=common
-    )
-
-# VERIFICA USUARIO #
+############################
+#   UTIL AND VALIDATIONS   #
+############################
 def is_teacher():
-    if not logged_in():
-        return False
-
+    logged_in()
     if session.get('type') != 'teacher':
-        flash('Você não está logado como professor.', 'error')
-        return False
-    
-    return True
-        
+        abort(403)
+
 
 def is_student():
-    if not logged_in():
-        return False
-    
+    logged_in()
     if session.get('type') != 'student':
-        flash('Você não está logado como aluno.', 'error')
-        return False
+        abort(403)
 
-    return True
 
 def logged_in():
     if not session.get('username'):
         flash('Você não está logado. Realize login!', 'error')
+        abort(401)
+
+
+def confirm_passwords(password, confirm_password):
+    if password == confirm_password:
+        return True
+    else:
         return False
-    return True

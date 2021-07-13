@@ -7,15 +7,15 @@
           <form class="needs-validation" novalidate>
             <h1 class="h3 mb-3 fw-normal text-center">Alterar Assunto</h1>
             <div class="form-floating mb-2">
-              <input type="text" class="form-control" id="floatingInput" value="{{ title }}"
+              <input type="text" class="form-control" id="floatingInput" value="{{ class_subject['title'] }}"
                      placeholder="Assunto da disciplina" name="subject_title" required>
               <label for="floatingInput">Assunto da disciplina</label>
             </div>
             <div class="form-floating mb-2">
                 <select name="previous_subject" class="form-select" aria-label="Assunto anterior">
                     <option value="">--  Nenhum assunto anterior --</option>
-                    {% for row in cs %}
-                        <option value="{{ row.cs.title }}" {{ "selected" if row.cs.title == ps }}>{{ row.cs.title }}</option>
+                    {% for row in class_subjects %}
+                        <option value="{{ row.cs.id }}" {{ "selected" if row.cs.id == previous_subject }}>{{ row.cs.title }}</option>
                     {% endfor %}
                 </select>
                 <label for="floatingInput">Assunto anterior</label>
@@ -23,8 +23,8 @@
             <div class="form-floating mb-2">
                 <select name="next_subject" class="form-select" aria-label="Assunto posterior">
                     <option value="">-- Nenhum assunto posterior --</option>
-                    {% for row in cs %}
-                        <option value="{{ row.cs.title }}" {{ "selected" if row.cs.title == ns }}>{{ row.cs.title }}</option>
+                    {% for row in class_subjects %}
+                        <option value="{{ row.cs.id }}" {{ "selected" if row.cs.id == next_subject }}>{{ row.cs.title }}</option>
                     {% endfor %}
                 </select>
                 <label for="floatingInput">Assunto posterior</label>
@@ -32,41 +32,38 @@
             <div class="form-floating mb-3">
                 <textarea class="form-control h-100" id="floatingInput" rows="5"
                           placeholder="Material de apoio"
-                          name="support_material">{{ support_material if support_material != None }}</textarea>
+                          name="support_material">{{ class_subject['support_material'] if class_subject['support_material'] != None }}</textarea>
                 <label for="floatingInput">Material de apoio</label>
             </div>
             <div class="form-floating mb-3">
                 Assunto inicial?&nbsp;&nbsp;&nbsp;
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" {{ "checked" if initial == "True"}}
+                    <input class="form-check-input" type="radio" {{ "checked" if class_subject['initial'] == "True"}}
                            name="checkbox_initial" id="checkbox_initial1" value="True">
                     <label class="form-check-label" for="checkbox_initial1">
                       Sim
                     </label>
                 </div>
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" {{ "checked" if initial == "False"}}
+                    <input class="form-check-input" type="radio" {{ "checked" if class_subject['initial'] == "False"}}
                            name="checkbox_initial" id="checkbox_initial2" value="False">
                     <label class="form-check-label" for="checkbox_initial2">
                       Não
                     </label>
                 </div>
             </div>
-
-            <input type="hidden" name="cc" value="{{ cc }}" />
-            <input type="hidden" name="title" value="{{ title }}" />
             
             <div class="row">
                 <div class="col-6">
                     <button class="w-100 btn btn-lg btn-success mt-3" type="submit" 
-                            formaction="{{ url_for('edit_class_subject') }}"
+                            formaction="{{ url_for('edit_class_subject', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}"
                             formmethod="post">
                         Alterar
                     </button>
                 </div>
                 <div class="col-6">
                     <a class="w-100 btn btn-lg btn-secondary mt-3"
-                       href="{{ url_for('open_class_subject', title=cc) }}">
+                       href="{{ url_for('class_subjects', cc_identity=course_class['id']) }}">
                         Cancelar
                     </a>
                 </div>

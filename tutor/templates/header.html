@@ -23,7 +23,7 @@
           {% else %}
             {% if session.type == 'teacher' %}
                 <li class="nav-item">
-                    <a class="nav-link {% if '/open_course_class' in request.path %}active{% endif %}" href="{{ url_for('open_course_class') }}">Cursos e Disciplinas</a>
+                    <a class="nav-link {% if '/course_classes' in request.path %}active{% endif %}" href="{{ url_for('course_classes') }}">Cursos e Disciplinas</a>
                 </li>
             {% else %}
                 <li class="nav-item">
@@ -40,7 +40,8 @@
                     <i class="bi bi-person-circle"></i>&nbsp;&nbsp;{{ session.person_name }}
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('profile') }}">Meu Perfil</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">Alterar Dados</a></li>
                 </ul>
             </li>
             <li class="nav-item">

@@ -15,7 +15,13 @@
           <label for="floatingInput">Usuário</label>
         </div>
         <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Senha" name="password" required>
+          <input type="email" class="form-control" id="floatingInput" value="{{ email }}"
+                 placeholder="E-mail" name="email" required>
+          <label for="floatingInput">E-mail</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" class="form-control" id="floatingPassword"
+                 placeholder="Senha" name="password" required>
           <label for="floatingPassword">Senha</label>
         </div>
         <div class="form-floating">
@@ -23,7 +29,7 @@
                  placeholder="Confirme a senha" name="confirm_password" required>
           <label for="floatingPassword">Confirmação de senha</label>
         </div>
-        <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Entrar</button>
+        <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Registrar</button>
       </form>
     </main>
   </div>

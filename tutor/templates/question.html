@@ -3,21 +3,22 @@
 
     {% if session.username %}
     <div class="mb-3 fw-normal text-center">
-        <h1 class="fw-normal text-center">{{ cs }}</h1><span class="small">{{cc}}</span>
+        <h1 class="fw-normal text-center">{{ class_subject['title'] }}</h1><span class="small">{{ course_class['title'] }}</span>
     </div>
       <div class="mb-4 text-center">
-        <button class="btn btn-lg btn-success shadow" id="add-course-class"
+        <button class="btn btn-lg btn-primary shadow" id="add-course-class"
                 data-bs-toggle="collapse" data-bs-target="#container-add-question">
                 <i class="bi bi-plus align-middle"></i>&nbsp; Adicionar questão 
         </button>
-        <a class="btn btn-lg btn-secondary mx-2 shadow" href="{{ url_for('open_class_subject', title=cc) }}">
+        <a class="btn btn-lg btn-secondary m-2 shadow" href="{{ url_for('class_subjects', cc_identity=course_class['id']) }}">
             <i class="bi bi-arrow-left align-middle"></i>&nbsp; Voltar à lista de assuntos
         </a>
       </div>
 
       <div class="container collapse multi-collapse mb-4" id="container-add-question">
         <main class="form rounded shadow">
-          <form class="needs-validation" action="{{ url_for('create_question') }}" method="post" novalidate>
+          <form class="needs-validation" method="post" novalidate
+                action="{{ url_for('questions', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}">
             <h1 class="h3 mb-3 fw-normal text-center">Nova questão</h1>
             <div class="form-floating mb-2">
               <input type="text" class="form-control" id="floatingInput"
@@ -102,8 +103,6 @@
                 </select>
                 <label for="floatingInput">Dificuldade</label>
             </div>
-            <input type="hidden" name="cs" value="{{ cs }}" />
-            <input type="hidden" name="cc" value="{{ cc }}" />
             <button class="btn btn-lg btn-success mx-2" type="submit">
                 Criar nova questão
             </button>

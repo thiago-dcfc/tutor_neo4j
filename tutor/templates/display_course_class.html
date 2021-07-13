@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-2"></div>
     <div class="col-8">
-        <table class="table table-striped shadow align-middle" name="course_class">
+        <table class="table table-striped table-bordered shadow align-middle">
             <thead class="table-dark text-center">
                 <tr>
                     <th>Título</th>
@@ -11,22 +11,30 @@
             </thead>
 
             <tbody>
-            {% for row in cc %}
+            {% for row in course_classes %}
                 <tr>
-                    <td>{{ row.cc.title }}</td>
+                    <td>
+                        <a class="link-dark" href="{{ url_for('class_subjects', cc_identity=row.cc.id) }}">
+                            {{ row.cc.title }}
+                        </a>
+                    </td>
                     <td class="text-center">
-                        <a class="btn btn-info btn-sm shadow-sm me-2"
-                           href="{{ url_for('open_class_subject', title=row.cc.title) }}">
-                            <i class="bi bi-eye-fill align-middle"></i>
-                        </a>
-                        <a class="btn btn-success btn-sm shadow-sm mx-2"
-                           href="{{ url_for('open_edit_course_class', title=row.cc.title) }}">
-                            <i class="bi bi-pencil-square align-middle"></i>
-                        </a>
-                        <a class="btn btn-danger btn-sm shadow-sm ms-2 delete-course-class"
-                            href="{{ url_for('delete_course_class', title=row.cc.title) }}">
-                            <i class="bi bi-x-lg align-middle"></i>
-                        </a>
+                        <form action="{{ url_for('delete_course_class', cc_identity=row.cc.id) }}"
+                            method="post">
+                            <a class="btn btn-info btn-sm shadow-sm m-1"
+                               href="{{ url_for('class_subjects', cc_identity=row.cc.id) }}">
+                                <i class="bi bi-eye-fill align-middle"></i>
+                            </a>
+
+                            <a class="btn btn-success btn-sm shadow-sm m-1"
+                               href="{{ url_for('edit_course_class', cc_identity=row.cc.id) }}">
+                                <i class="bi bi-pencil-square align-middle"></i>
+                            </a>
+                            <button class="btn btn-danger btn-sm shadow-sm m-1 delete-course-class"
+                                    type="submit">
+                                <i class="bi bi-x-lg align-middle"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
             {% else %}

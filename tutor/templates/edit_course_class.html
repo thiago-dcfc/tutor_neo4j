@@ -7,24 +7,21 @@
           <form class="needs-validation" novalidate>
             <h1 class="h3 mb-3 fw-normal">Alterando Disciplina</h1>
             <div class="form-floating">
-              <input type="text" class="form-control" id="floatingInput" value="{{ cc }}"
+              <input type="text" class="form-control" id="floatingInput" value="{{ course_class['title'] }}"
                      placeholder="Nome da disciplina" name="new_title" required>
               <label for="floatingInput">Nome da disciplina</label>
             </div>
-
-            <input type="hidden" name="cc" value="{{ cc }}" />
-
             <div class="row">
                 <div class="col-6">
                     <button class="w-100 btn btn-lg btn-success mt-3" type="submit" 
-                            formaction="{{ url_for('edit_course_class') }}"
+                            formaction="{{ url_for('edit_course_class', cc_identity=course_class['id']) }}"
                             formmethod="post">
                         Alterar
                     </button>
                 </div>
                 <div class="col-6">
                     <a class="w-100 btn btn-lg btn-secondary mt-3"
-                       href="{{ url_for('open_course_class') }}">
+                       href="{{ url_for('course_classes') }}">
                         Cancelar
                     </a>
                 </div>

@@ -5,7 +5,7 @@
         <h1 class="mb-3 fw-normal text-center">Minhas disciplinas</h1>
 
         <div class="mb-4 text-center">
-            <button class="btn btn-lg btn-success shadow" id="add-course-class"
+            <button class="btn btn-lg btn-primary shadow" id="add-course-class"
                     data-bs-toggle="collapse" data-bs-target="#container-add-course-class">
                     <i class="bi bi-plus align-middle"></i>&nbsp; Adicionar disciplina
             </button>
@@ -13,7 +13,7 @@
 
         <div class="container text-center collapse multi-collapse mb-4" id="container-add-course-class">
             <main class="form-signin rounded shadow">
-              <form class="needs-validation" action="{{ url_for('create_course_class') }}" method="post" novalidate>
+              <form class="needs-validation" action="{{ url_for('course_classes') }}" method="post" novalidate>
                 <h1 class="h3 mb-3 fw-normal">Nova disciplina</h1>
                 <div class="form-floating">
                   <input type="text" class="form-control" id="floatingInput"

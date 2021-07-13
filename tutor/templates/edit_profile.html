@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <div class="container">
+        <main class="form-signin rounded shadow">
+            <form class="needs-validation"  action="{{ url_for('edit_profile') }}" method="post" novalidate>
+                <h1 class="h3 mb-3 fw-normal text-center">Alterando dados</h1>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingInput" value="{{ name }}"
+                           placeholder="Nome completo" name="name" required>
+                    <label for="floatingInput">Nome completo</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingInput" value="{{ username }}"
+                           placeholder="Nome de usuário" name="username" required disabled>
+                    <label for="floatingInput">Usuário <span class="fst-italic">(não pode ser alterado)</span></label>
+                </div>
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInput" value="{{ email }}"
+                           placeholder="E-mail" name="email" required>
+                    <label for="floatingInput">E-mail</label>
+                </div>
+                <div class="form-floating">
+                    <span class="small text-muted">(Deixe a senha em branco caso não queira alterar)</span>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword"
+                           placeholder="Senha" name="password">
+                    <label for="floatingPassword">Senha</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword"
+                           placeholder="Confirme a senha" name="confirm_password">
+                    <label for="floatingPassword">Confirmação de senha</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Salvar</button>
+            </form>
+        </main>
+    </div>
+
+{% endblock %}

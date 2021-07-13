@@ -1,36 +1,36 @@
 {% extends "layout.html" %}
 {% block body %}
-
     {% if session.username %}
     <div class="container">
         <main class="form rounded shadow">
           <form class="needs-validation" novalidate>
             <h1 class="h3 mb-3 fw-normal text-center">Alterar Questão</h1>
             <div class="form-floating mb-2">
-              <input type="text" class="form-control" id="floatingInput" value="{{ q.title }}"
+              <input type="text" class="form-control" id="floatingInput" value="{{ question.title }}"
                      placeholder="Título da questão" name="question_title" required />
               <label for="floatingInput">Título da questão</label>
             </div>
             <div class="form-floating mb-3">
                 <textarea class="form-control h-100" id="floatingInput" rows="5"
                           placeholder="Material de apoio"
-                          name="support_material">{{ q.support_material if q.support_material != None }}</textarea>
+                          name="support_material">{{ question.support_material if question.support_material != None }}</textarea>
                 <label for="floatingInput">Material de apoio</label>
             </div>
             <div class="form-floating mb-3">
                 <textarea class="form-control h-100" id="floatingInput" rows="5"
                           placeholder="Enunciad"
-                          name="question_body">{{ q.body if q.body != None }}</textarea>
+                          name="question_body">{{ question.body if question.body != None }}</textarea>
                 <label for="floatingInput">Enunciado</label>
             </div>
             
             <div class="form-floating">
                 <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa A" name="choice_a">{{  q.choice_a if q.choice_a != None  }}</textarea>
+                       placeholder="Alternativa A"
+                          name="choice_a">{{  question.choice_a if question.choice_a != None  }}</textarea>
                 <label for="floatingInput">Alternativa A</label>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" {{ "checked" if q.right_answer == "a" }}
+                <input class="form-check-input" type="radio" {{ "checked" if question.right_answer == "a" }}
                        name="right_answer" id="right_answer_a" value="a">
                 <label class="form-check-label" for="right_answer_a">
                   Resposta correta
@@ -39,11 +39,12 @@
 
             <div class="form-floating">
                 <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa B" name="choice_b">{{  q.choice_b if q.choice_b != None  }}</textarea>
+                       placeholder="Alternativa B"
+                          name="choice_b">{{  question.choice_b if question.choice_b != None  }}</textarea>
                 <label for="floatingInput">Alternativa B</label>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" {{ "checked" if q.right_answer == "b" }}
+                <input class="form-check-input" type="radio" {{ "checked" if question.right_answer == "b" }}
                        name="right_answer" id="right_answer_b" value="b">
                 <label class="form-check-label" for="right_answer_b">
                   Resposta correta
@@ -52,11 +53,12 @@
 
             <div class="form-floating">
                 <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa C" name="choice_c">{{  q.choice_c if q.choice_c != None  }}</textarea>
+                       placeholder="Alternativa C"
+                          name="choice_c">{{  question.choice_c if question.choice_c != None  }}</textarea>
                 <label for="floatingInput">Alternativa C</label>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" {{ "checked" if q.right_answer == "c" }}
+                <input class="form-check-input" type="radio" {{ "checked" if question.right_answer == "c" }}
                        name="right_answer" id="right_answer_c" value="c">
                 <label class="form-check-label" for="right_answer_c">
                   Resposta correta
@@ -65,11 +67,12 @@
 
             <div class="form-floating">
                 <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa D" name="choice_d">{{  q.choice_d if q.choice_d != None  }}</textarea>
+                       placeholder="Alternativa D"
+                          name="choice_d">{{  question.choice_d if question.choice_d != None  }}</textarea>
                 <label for="floatingInput">Alternativa D</label>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" {{ "checked" if q.right_answer == "d" }}
+                <input class="form-check-input" type="radio" {{ "checked" if question.right_answer == "d" }}
                        name="right_answer" id="right_answer_d" value="d">
                 <label class="form-check-label" for="right_answer_d">
                   Resposta correta
@@ -78,35 +81,31 @@
 
             <div class="form-floating mb-3 col-3">
                 <select name="difficulty" class="form-select" aria-label="Dificuldade">
-                    <option value="1" {{ "selected" if q.difficulty == "1" }}>1</option>
-                    <option value="2" {{ "selected" if q.difficulty == "2" }}>2</option>
-                    <option value="3" {{ "selected" if q.difficulty == "3" }}>3</option>
-                    <option value="4" {{ "selected" if q.difficulty == "4" }}>4</option>
-                    <option value="5" {{ "selected" if q.difficulty == "5" }}>5</option>
-                    <option value="6" {{ "selected" if q.difficulty == "6" }}>6</option>
-                    <option value="7" {{ "selected" if q.difficulty == "7" }}>7</option>
-                    <option value="8" {{ "selected" if q.difficulty == "8" }}>8</option>
-                    <option value="9" {{ "selected" if q.difficulty == "9" }}>9</option>
-                    <option value="10" {{ "selected" if q.difficulty == "10" }}>10</option>
+                    <option value="1" {{ "selected" if question.difficulty == "1" }}>1</option>
+                    <option value="2" {{ "selected" if question.difficulty == "2" }}>2</option>
+                    <option value="3" {{ "selected" if question.difficulty == "3" }}>3</option>
+                    <option value="4" {{ "selected" if question.difficulty == "4" }}>4</option>
+                    <option value="5" {{ "selected" if question.difficulty == "5" }}>5</option>
+                    <option value="6" {{ "selected" if question.difficulty == "6" }}>6</option>
+                    <option value="7" {{ "selected" if question.difficulty == "7" }}>7</option>
+                    <option value="8" {{ "selected" if question.difficulty == "8" }}>8</option>
+                    <option value="9" {{ "selected" if question.difficulty == "9" }}>9</option>
+                    <option value="10" {{ "selected" if question.difficulty == "10" }}>10</option>
                 </select>
                 <label for="floatingInput">Dificuldade</label>
             </div>
 
-            <input type="hidden" name="cs" value="{{ cs }}" />
-            <input type="hidden" name="cc" value="{{ cc }}" />
-            <input type="hidden" name="question_id" value="{{ q.id }}" />
-
             <div class="row">
                 <div class="col-6">
                     <button class="w-100 btn btn-lg btn-success mt-3" type="submit" 
-                            formaction="{{ url_for('edit_question', cc=cc, cs=cs, question_id=q.id) }}"
+                            formaction="{{ url_for('edit_question', cc_identity=course_class['id'], cs_identity=class_subject['id'], question_identity=question.id) }}"
                             formmethod="post">
                         Alterar
                     </button>
                 </div>
                 <div class="col-6">
                     <a class="w-100 btn btn-lg btn-secondary mt-3"
-                       href="{{ url_for('open_questions', cc_title=cc, cs_title=cs) }}">
+                       href="{{ url_for('questions', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}">
                         Cancelar
                     </a>
                 </div>
@@ -115,5 +114,4 @@
         </main>
       </div>
     {% endif %}
-
 {% endblock %}
