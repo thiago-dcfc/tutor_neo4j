@@ -31,15 +31,15 @@
                                       method="post">
                                     <a class="btn btn-info btn-sm shadow-sm m-1"
                                        href="{{ url_for('questions', cc_identity=course_class['id'], cs_identity=row.cs.id) }}">
-                                        <i class="bi bi-eye-fill align-middle"></i>
+                                        <i class="fas fa-eye"></i>
                                     </a>
                                     <a class="btn btn-success btn-sm shadow-sm m-1"
                                        href="{{ url_for('edit_class_subject', cc_identity=course_class['id'], cs_identity=row.cs.id) }}">
-                                        <i class="bi bi-pencil-square align-middle"></i>
+                                        <i class="fas fa-edit"></i>
                                     </a>
                                     <button class="btn btn-danger btn-sm shadow-sm m-1 delete-class-subject"
                                         type="submit">
-                                        <i class="bi bi-x-lg align-middle"></i>
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
                             </div>
