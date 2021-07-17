@@ -1,36 +1,93 @@
 {% extends "layout.html" %}
 {% block body %}
-  <div class="container text-center">
-    <main class="form-signin rounded shadow">
-      <form class="needs-validation"  action="{{ url_for('register') }}" method="post" novalidate>
-        <h1 class="h3 mb-3 fw-normal">Registro de Aluno</h1>
-        <div class="form-floating">
-          <input type="text" class="form-control" id="floatingInput" value="{{ name }}"
-                 placeholder="Nome completo" name="name" required>
-          <label for="floatingInput">Nome completo</label>
-        </div>
-        <div class="form-floating">
-          <input type="text" class="form-control" id="floatingInput" value="{{ username }}"
-                 placeholder="Nome de usuário" name="username" required>
-          <label for="floatingInput">Usuário</label>
-        </div>
-        <div class="form-floating">
-          <input type="email" class="form-control" id="floatingInput" value="{{ email }}"
-                 placeholder="E-mail" name="email" required>
-          <label for="floatingInput">E-mail</label>
-        </div>
-        <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword"
-                 placeholder="Senha" name="password" required>
-          <label for="floatingPassword">Senha</label>
-        </div>
-        <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" 
-                 placeholder="Confirme a senha" name="confirm_password" required>
-          <label for="floatingPassword">Confirmação de senha</label>
-        </div>
-        <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Registrar</button>
-      </form>
-    </main>
-  </div>
+    <div class="container">
+        <main class="form-signin rounded shadow">
+            <form action="{{ url_for('register') }}" method="post">
+                <h1 class="h3 mb-3 fw-normal text-center">Registro de Aluno</h1>
+                <div class="form-floating">
+                    {% if form.name.errors %}
+                        {{ form.name(class='form-control is-invalid',
+                                placeholder='Nome completo') }}
+                    {% else %}
+                        {{ form.name(class='form-control',
+                                placeholder='Nome completo') }}
+                    {% endif %}
+                    {{ form.name.label }}
+
+                    {% if form.name.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-floating">
+                    {% if form.username.errors %}
+                        {{ form.username(class='form-control is-invalid',
+                                placeholder='Nome de usuário') }}
+                    {% else %}
+                        {{ form.username(class='form-control',
+                                placeholder='Nome de usuário') }}
+                    {% endif %}
+                    {{ form.username.label }}
+
+                    {% if form.username.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-floating">
+                    {% if form.email.errors %}
+                        {{ form.email(class='form-control is-invalid',
+                                placeholder='Email') }}
+                    {% else %}
+                        {{ form.email(class='form-control',
+                                placeholder='Email') }}
+                    {% endif %}
+                    {{ form.email.label }}
+
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-floating">
+                    {% if form.password.errors %}
+                        {{ form.password(class='form-control is-invalid',
+                                placeholder='Senha') }}
+                    {% else %}
+                        {{ form.password(class='form-control',
+                                placeholder='Senha') }}
+                    {% endif %}
+                    {{ form.password.label }}
+                </div>
+                <div class="form-floating">
+                    {% if form.password.errors %}
+                        {{ form.confirm_password(class='form-control is-invalid',
+                                placeholder='Confirmação de senha') }}
+                    {% else %}
+                        {{ form.confirm_password(class='form-control',
+                                placeholder='Confirmação de senha') }}
+                    {% endif %}
+                    {{ form.confirm_password.label }}
+
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Registrar</button>
+            </form>
+        </main>
+    </div>
 {% endblock %}

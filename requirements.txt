@@ -9,3 +9,5 @@ MarkupSafe==2.0.1
 passlib==1.7.4
 pycparser==2.20
 six==1.16.0
+wtforms==2.3.3
+email_validator==1.1.3

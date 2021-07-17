@@ -14,7 +14,12 @@
         </thead>
         {% for row in class_subjects %}
             <tr>
-                <td>{{ row.cs.title }}</td>
+                <td>
+                    <a class="link-dark"
+                       href="{{ url_for('questions', cc_identity=course_class['id'], cs_identity=row.cs.id) }}">
+                        {{ row.cs.title }}
+                    </a>
+                </td>
                 <td class="text-center">{{ "Sim" if row.cs.initial == "True" else "Não" }}</td>
                 <td class="text-center">{{ row.ps_title if row.ps_title != None else "-" }}</td>
                 <td class="text-center">{{ row.ns_title if row.ns_title != None else "-" }}</td>

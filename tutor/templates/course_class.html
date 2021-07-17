@@ -2,28 +2,52 @@
 {% block body %}
 
     {% if session.username %}
-        <h1 class="mb-3 fw-normal text-center">Minhas disciplinas</h1>
+        <div class="mb-3 fw-normal text-center">
+            <h1>Minhas disciplinas</h1>
+            <ol class="breadcrumb small mx-auto justify-content-center">
+                <li class="breadcrumb-item">
+                    <a class="link-dark" href="{{ url_for('index') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Minhas Disciplinas
+                </li>
+            </ol>
+        </div>
 
         <div class="mb-4 text-center">
             <button class="btn btn-lg btn-primary shadow" id="add-course-class"
                     data-bs-toggle="collapse" data-bs-target="#container-add-course-class">
-                    <i class="fas fa-plus"></i>&nbsp; Adicionar disciplina
+                <i class="fas fa-plus"></i>&nbsp; Adicionar disciplina
             </button>
         </div>
 
-        <div class="container text-center collapse multi-collapse mb-4" id="container-add-course-class">
+        <div class="container collapse multi-collapse mb-4 {% if error %} show {% endif %}"
+             id="container-add-course-class">
             <main class="form-signin rounded shadow">
-              <form class="needs-validation" action="{{ url_for('course_classes') }}" method="post" novalidate>
-                <h1 class="h3 mb-3 fw-normal">Nova disciplina</h1>
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="floatingInput"
-                         placeholder="Nome da disciplina" name="title" required>
-                  <label for="floatingInput">Nome da disciplina</label>
-                </div>
-                <button class="w-100 btn btn-lg btn-success mt-3" type="submit">
-                    Criar nova disciplina
-                </button>
-              </form>
+                <form action="{{ url_for('course_classes') }}" method="post">
+                    <h1 class="h3 mb-3 fw-normal text-center">Nova disciplina</h1>
+                    <div class="form-floating">
+                        {% if form.title.errors %}
+                            {{ form.title(class='form-control is-invalid',
+                                placeholder='Nome da disciplina') }}
+                        {% else %}
+                            {{ form.title(class='form-control',
+                                placeholder='Nome da disciplina') }}
+                        {% endif %}
+                        {{ form.title.label }}
+
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button class="w-100 btn btn-lg btn-success mt-3" type="submit">
+                        Criar nova disciplina
+                    </button>
+                </form>
             </main>
         </div>
 

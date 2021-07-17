@@ -1,26 +1,54 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="container">
-  <main class="form-signin rounded shadow">
-    <form class="needs-validation" action="{{ url_for('login') }}" method="post" novalidate>
-      <h1 class="h3 mb-3 fw-normal text-center">Faça login</h1>
-  
-      <div class="form-floating">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Nome de usuário" name="username" required>
-        <label for="floatingInput">Usuário</label>
-      </div>
-      <div class="form-floating">
-        <input type="password" class="form-control" id="floatingPassword" placeholder="Senha" name="password" required>
-        <label for="floatingPassword">Senha</label>
-      </div>
-  
-      <div class="checkbox mb-3 mt-2">
-        <label>
-          <input type="checkbox" value="remember-me"> Lembrar de mim
-        </label>
-      </div>
-      <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
-    </form>
-  </main>  
-</div>
+    <div class="container">
+        <main class="form-signin rounded shadow">
+            <form action="{{ url_for('login') }}" method="post">
+                <h1 class="h3 mb-3 fw-normal text-center">Faça login</h1>
+
+                <div class="form-floating">
+                    {% if form.username.errors %}
+                        {{ form.username(class='form-control is-invalid',
+                                placeholder='Nome completo') }}
+                    {% else %}
+                        {{ form.username(class='form-control',
+                                placeholder='Nome completo') }}
+                    {% endif %}
+                    {{ form.username.label }}
+
+                    {% if form.username.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="form-floating">
+                    {% if form.password.errors %}
+                        {{ form.password(class='form-control is-invalid',
+                                placeholder='Senha') }}
+                    {% else %}
+                        {{ form.password(class='form-control',
+                                placeholder='Senha') }}
+                    {% endif %}
+                    {{ form.password.label }}
+
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="checkbox mb-3 mt-2">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Lembrar de mim
+                    </label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
+            </form>
+        </main>
+    </div>
 {% endblock %}

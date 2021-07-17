@@ -3,35 +3,79 @@
 
     <div class="container">
         <main class="form-signin rounded shadow">
-            <form class="needs-validation"  action="{{ url_for('edit_profile') }}" method="post" novalidate>
+            <form action="{{ url_for('edit_profile') }}" method="post">
                 <h1 class="h3 mb-3 fw-normal text-center">Alterando dados</h1>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="floatingInput" value="{{ name }}"
-                           placeholder="Nome completo" name="name" required>
-                    <label for="floatingInput">Nome completo</label>
+                    {% if form.name.errors %}
+                        {{ form.name(class='form-control is-invalid',
+                                placeholder='Nome completo') }}
+                    {% else %}
+                        {{ form.name(class='form-control',
+                                placeholder='Nome completo') }}
+                    {% endif %}
+                    {{ form.name.label }}
+
+                    {% if form.name.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.name.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="floatingInput" value="{{ username }}"
-                           placeholder="Nome de usuário" name="username" required disabled>
-                    <label for="floatingInput">Usuário <span class="fst-italic">(não pode ser alterado)</span></label>
+                    {{ form.username(class='form-control',
+                            placeholder='Nome de usuário', disabled='disabled') }}
+                    {{ form.username.label }}
                 </div>
                 <div class="form-floating">
-                    <input type="email" class="form-control" id="floatingInput" value="{{ email }}"
-                           placeholder="E-mail" name="email" required>
-                    <label for="floatingInput">E-mail</label>
+                    {% if form.email.errors %}
+                        {{ form.email(class='form-control is-invalid',
+                                placeholder='Email') }}
+                    {% else %}
+                        {{ form.email(class='form-control',
+                                placeholder='Email') }}
+                    {% endif %}
+                    {{ form.email.label }}
+
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-floating">
                     <span class="small text-muted">(Deixe a senha em branco caso não queira alterar)</span>
                 </div>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="floatingPassword"
-                           placeholder="Senha" name="password">
-                    <label for="floatingPassword">Senha</label>
+                    {% if form.password.errors %}
+                        {{ form.password(class='form-control is-invalid',
+                                placeholder='Email') }}
+                    {% else %}
+                        {{ form.password(class='form-control',
+                                placeholder='Email') }}
+                    {% endif %}
+                    {{ form.password.label }}
                 </div>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="floatingPassword"
-                           placeholder="Confirme a senha" name="confirm_password">
-                    <label for="floatingPassword">Confirmação de senha</label>
+                    {% if form.password.errors %}
+                        {{ form.confirm_password(class='form-control is-invalid',
+                                placeholder='Email') }}
+                    {% else %}
+                        {{ form.confirm_password(class='form-control',
+                                placeholder='Email') }}
+                    {% endif %}
+                    {{ form.confirm_password.label }}
+
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                {{ error }}<br/>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Salvar</button>
             </form>

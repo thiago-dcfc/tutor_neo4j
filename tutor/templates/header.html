@@ -1,54 +1,80 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid container">
-      <a class="navbar-brand" href="{{ url_for('index') }}">
-        <i class="fas fa-graduation-cap"></i> &nbsp;Tutor Neo4J
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-              data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" 
-              aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{{ url_for('index') }}">Home</a>
-          </li>
-          {% if not session.username %}
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == '/register' %}active{% endif %}" href="{{ url_for('register') }}">Cadastrar</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {% if request.path == '/login' %}active{% endif %}" href="{{ url_for('login') }}">Entrar</a>
-            </li>
-          {% else %}
-            {% if session.type == 'teacher' %}
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+            <i class="fas fa-graduation-cap"></i> &nbsp;Tutor Neo4J
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link {% if '/course_classes' in request.path %}active{% endif %}" href="{{ url_for('course_classes') }}">Cursos e Disciplinas</a>
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page"
+                       href="{{ url_for('index') }}">Home</a>
                 </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link {% if '/open_course_class_student' in request.path %}active{% endif %}" href="{{ url_for('open_course_class_student') }}">Disciplinas</a>
-                </li>
-            {% endif %}
-          {% endif %}
-        </ul>
+                {% if not session.username %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/register' %}active{% endif %}"
+                           href="{{ url_for('register') }}">Cadastrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/login' %}active{% endif %}"
+                           href="{{ url_for('login') }}">Entrar</a>
+                    </li>
+                {% else %}
+                    {% if session.type == 'teacher' %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/course_classes' in request.path %}active{% endif %}"
+                               href="{{ url_for('course_classes') }}">Cursos e Disciplinas</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/open_course_class_student' in request.path %}active{% endif %}"
+                               href="{{ url_for('open_course_class_student') }}">Disciplinas</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
 
-        {% if session.username %}
-        <ul class="navbar-nav d-flex">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user"></i>&nbsp;&nbsp;{{ session.person_name }}
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <li><a class="dropdown-item" href="{{ url_for('profile') }}">Meu Perfil</a></li>
-                    <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">Alterar Dados</a></li>
+            {% if session.username %}
+                <ul class="navbar-nav d-flex">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i>&nbsp;&nbsp;{{ session.person_name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}">Meu Perfil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">Alterar Dados</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal"
+                           href="#">
+                            Sair &nbsp;<i class="fas fa-sign-out-alt"></i>
+                        </a>
+                    </li>
                 </ul>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('logout') }}">Sair &nbsp;<i class="fas fa-sign-out-alt"></i></a>
-            </li>
-        </ul>
-        {% endif %}        
-      </div>
+
+                <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalLabel">Saindo do sistema</h5>
+                                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">Tem certeza que deseja sair?</div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
+                                <a class="btn btn-primary" href="{{ url_for('logout') }}">Sair</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
-  </nav>
+</nav>

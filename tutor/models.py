@@ -11,8 +11,15 @@ matcher = NodeMatcher(graph)
 #   PERSON   #
 ##############
 class Person:
-    def __init__(self, username):
+    def __init__(self, username='', node_user=None):
         self.username = username
+
+        if node_user:
+            self.username = node_user['username']
+            self.name = node_user['name']
+            self.email = node_user['email']
+            self.password = node_user['password']
+            self.type = node_user['type']
 
     def find(self):
         return matcher.match("Person", username=self.username).first()
@@ -59,6 +66,11 @@ class Person:
 #   COURSE CLASS   #
 ####################
 class CourseClass:
+    def __init__(self, node_course_class=None):
+        if node_course_class:
+            self.id = node_course_class['id']
+            self.title = node_course_class['title']
+
     def find(self, title):
         return matcher.match("CourseClass", title=title).first()
 
@@ -89,7 +101,7 @@ class CourseClass:
         return False
 
     def edit(self, identity, title, user):
-        if not self.find(title):
+        if not self.find_by_user(title, user):
             query = '''
                     MATCH (cc:CourseClass {id: $identity})<--(p:Person {username: $user})
                     SET cc.title = $title
@@ -161,8 +173,15 @@ class CourseClass:
 #   CLASS SUBJECT   #
 #####################
 class ClassSubject:
+    def __init__(self, node_class_subject=None):
+        if node_class_subject:
+            self.id = node_class_subject['id']
+            self.title = node_class_subject['title']
+            self.support_material = node_class_subject['support_material']
+            self.initial = node_class_subject['initial']
+
     # método que retorna a quantidade de nós ClassSubject
-    def find_node_count(self, cc_identity, cs_identity):
+    def find_node_count(self, cc_identity, cs_identity=''):
         query = '''
                 MATCH (cc:CourseClass {id: $cc_identity})<-->(cs:ClassSubject)
                 OPTIONAL MATCH (cs)<-->(cs {id: $cs_identity})
@@ -186,6 +205,15 @@ class ClassSubject:
                 ORDER BY cs.order
                 '''
         return graph.run(query, cc_identity=cc_identity, title=title)
+
+    def find_in_course_by_title_not_current(self, cc_identity, title, cs_identity):
+        query = '''
+                MATCH (cs:ClassSubject)-[:TAUGHT]->(cc:CourseClass)
+                WHERE cc.id = $cc_identity AND cs.title = $title AND cs.id <> $cs_identity
+                RETURN cs
+                ORDER BY cs.order
+                '''
+        return graph.run(query, cc_identity=cc_identity, title=title, cs_identity=cs_identity)
 
     # Retorna o valor do campo 'initial' de um Assunto específco
     def get_initial_value(self, cc_identity, cs_identity):
@@ -227,10 +255,10 @@ class ClassSubject:
         return graph.evaluate(query, cc_identity=cc_identity, cs_identity=cs_identity)
 
     # Retorna o nó de um Assunto através do título do Assunto e do título da Disciplina
-    def find_single_class_subject(self, cc_identity, cs_identity):
+    def find_class_subject_has_questions(self, cc_identity, cs_identity):
         query = '''
                 MATCH (cc:CourseClass {id: $cc_identity})<-->(cs:ClassSubject {id: $cs_identity})
-                WHERE NOT (cs)<-->(:Question)
+                WHERE (cs)<-->(:Question)
                 RETURN cs
                 '''
         return graph.evaluate(query, cc_identity=cc_identity, cs_identity=cs_identity)
@@ -259,33 +287,34 @@ class ClassSubject:
         return False
 
     def edit(self, cc_identity, cs_identity, subject_title, previous_subject, next_subject, support_material, initial):
-        query = '''
-                MATCH (cc:CourseClass {id: $cc_identity})
-                OPTIONAL MATCH (cs:ClassSubject {id: $cs_identity})
-                WHERE (cc)<-->(cs)
-                SET cs.title = $subject_title, cs.support_material = $support_material, cs.initial = $initial
-                '''
+        if not self.find_in_course_by_title_not_current(cc_identity, subject_title, cs_identity).evaluate():
+            query = '''
+                    MATCH (cc:CourseClass {id: $cc_identity})
+                    OPTIONAL MATCH (cs:ClassSubject {id: $cs_identity})
+                    WHERE (cc)<-->(cs)
+                    SET cs.title = $subject_title, cs.support_material = $support_material, cs.initial = $initial
+                    '''
 
-        class_subject = self.find_in_course(cc_identity, cs_identity)
-        if initial == "False" and initial != class_subject['initial'] and \
-                self.find_node_count(cc_identity, cs_identity) > 1:
-            initial = "True"
-        elif initial == "True" and initial != class_subject['initial']:
-            self.set_class_subject_initial_false(cc_identity)
+            class_subject = self.find_in_course(cc_identity, cs_identity)
+            if initial == "False" and initial != class_subject['initial'] and \
+                    self.find_node_count(cc_identity, cs_identity) > 1:
+                initial = "True"
+            elif initial == "True" and initial != class_subject['initial']:
+                self.set_class_subject_initial_false(cc_identity)
 
-        graph.run(query, cc_identity=cc_identity, cs_identity=cs_identity,
-                  subject_title=subject_title, support_material=support_material,
-                  initial=initial)
+            graph.run(query, cc_identity=cc_identity, cs_identity=cs_identity,
+                      subject_title=subject_title, support_material=support_material,
+                      initial=initial)
 
-        self.delete_previous_subject(cc_identity, cs_identity)
-        if previous_subject:
-            self.create_relationship_with_previous_subject(cc_identity, cs_identity, previous_subject)
+            self.delete_previous_subject(cc_identity, cs_identity)
+            if previous_subject:
+                self.create_relationship_with_previous_subject(cc_identity, cs_identity, previous_subject)
 
-        self.delete_next_subject(cc_identity, cs_identity)
-        if next_subject:
-            self.create_relationship_with_next_subject(cc_identity, cs_identity, next_subject)
-
-        return True
+            self.delete_next_subject(cc_identity, cs_identity)
+            if next_subject:
+                self.create_relationship_with_next_subject(cc_identity, cs_identity, next_subject)
+            return True
+        return False
 
     def delete_previous_subject(self, cc_identity, cs_identity):
         query = '''
@@ -394,13 +423,26 @@ class ClassSubject:
 #   QUESTION   #
 ################
 class Question:
+    def __init__(self, node_question=None):
+        if node_question:
+            self.id = node_question['id']
+            self.title = node_question['title']
+            self.body = node_question['body']
+            self.support_material = node_question['support_material']
+            self.difficulty = node_question['difficulty']
+            self.choice_a = node_question['choice_a']
+            self.choice_b = node_question['choice_b']
+            self.choice_c = node_question['choice_c']
+            self.choice_d = node_question['choice_d']
+            self.right_answer = node_question['right_answer']
+
     # Retorna uma questão através do id (NÃO ESTA SENDO USADO)
     def find(self, identity):
         return matcher.match("Question", id=identity).first()
 
     # Cria uma questão
     def create(self, cc_identity, cs_identity, title, body, support_material, difficulty, choice_a, choice_b, choice_c,
-               choice_d, right_answer, user):
+               choice_d, right_answer):
         cs = ClassSubject().find_in_course(cc_identity, cs_identity)
 
         question = Node(

@@ -2,117 +2,166 @@
 {% block body %}
 
     {% if session.username %}
-    <div class="mb-3 fw-normal text-center">
-        <h1 class="fw-normal text-center">{{ class_subject['title'] }}</h1><span class="small">{{ course_class['title'] }}</span>
-    </div>
-      <div class="mb-4 text-center">
-        <button class="btn btn-lg btn-primary shadow" id="add-course-class"
-                data-bs-toggle="collapse" data-bs-target="#container-add-question">
+        <div class="mb-3 fw-normal text-center">
+            <h1>{{ class_subject['title'] }}</h1>
+
+            <ol class="breadcrumb small mx-auto justify-content-center">
+                <li class="breadcrumb-item">
+                    <a class="link-dark" href="{{ url_for('index') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a class="link-dark" href="{{ url_for('course_classes') }}">Minhas Disciplinas</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a class="link-dark" href="{{ url_for('class_subjects', cc_identity=course_class['id']) }}">
+                        Assuntos de {{ course_class['title'] }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Questões de {{ class_subject['title'] }}
+                </li>
+            </ol>
+        </div>
+        <div class="mb-4 text-center">
+            <button class="btn btn-lg btn-primary shadow" id="add-course-class"
+                    data-bs-toggle="collapse" data-bs-target="#container-add-question">
                 <i class="fas fa-plus"></i>&nbsp; Adicionar questão
-        </button>
-        <a class="btn btn-lg btn-secondary m-2 shadow" href="{{ url_for('class_subjects', cc_identity=course_class['id']) }}">
-            <i class="fas fa-arrow-left"></i>&nbsp; Voltar à lista de assuntos
-        </a>
-      </div>
-
-      <div class="container collapse multi-collapse mb-4" id="container-add-question">
-        <main class="form rounded shadow">
-          <form class="needs-validation" method="post" novalidate
-                action="{{ url_for('questions', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}">
-            <h1 class="h3 mb-3 fw-normal text-center">Nova questão</h1>
-            <div class="form-floating mb-2">
-              <input type="text" class="form-control" id="floatingInput"
-                     placeholder="Título da questão" name="question_title" required>
-              <label for="floatingInput">Título da questão</label>
-            </div>
-            <div class="form-floating mb-3">
-                <textarea class="form-control h-100" id="floatingInput" rows="5"
-                       placeholder="Enunciado" name="question_body" required></textarea>
-                <label for="floatingInput">Enunciado</label>
-            </div>
-            <div class="form-floating mb-3">
-                <textarea class="form-control h-100" id="floatingInput" rows="5"
-                       placeholder="Material de apoio" name="support_material"></textarea>
-                <label for="floatingInput">Material de apoio</label>
-            </div>
-
-            <div class="form-floating">
-                <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa A" name="choice_a"></textarea>
-                <label for="floatingInput">Alternativa A</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" checked
-                       name="right_answer" id="right_answer_a" value="a">
-                <label class="form-check-label" for="right_answer_a">
-                  Resposta correta
-                </label>
-            </div>
-
-            <div class="form-floating">
-                <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa B" name="choice_b"></textarea>
-                <label for="floatingInput">Alternativa B</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio"
-                       name="right_answer" id="right_answer_b" value="b">
-                <label class="form-check-label" for="right_answer_b">
-                  Resposta correta
-                </label>
-            </div>
-
-            <div class="form-floating">
-                <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa C" name="choice_c"></textarea>
-                <label for="floatingInput">Alternativa C</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio"
-                       name="right_answer" id="right_answer_c" value="c">
-                <label class="form-check-label" for="right_answer_c">
-                  Resposta correta
-                </label>
-            </div>
-
-            <div class="form-floating">
-                <textarea class="form-control" id="floatingInput" rows="5"
-                       placeholder="Alternativa D" name="choice_d"></textarea>
-                <label for="floatingInput">Alternativa D</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio"
-                       name="right_answer" id="right_answer_d" value="d">
-                <label class="form-check-label" for="right_answer_d">
-                  Resposta correta
-                </label>
-            </div>
-
-            <div class="form-floating mb-3 col-3">
-                <select name="difficulty" class="form-select" aria-label="Dificuldade">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                </select>
-                <label for="floatingInput">Dificuldade</label>
-            </div>
-            <button class="btn btn-lg btn-success mx-2" type="submit">
-                Criar nova questão
             </button>
-          </form>
-        </main>
-      </div>
+            <a class="btn btn-lg btn-secondary m-2 shadow"
+               href="{{ url_for('class_subjects', cc_identity=course_class['id']) }}">
+                <i class="fas fa-arrow-left"></i>&nbsp; Voltar à lista de assuntos
+            </a>
+        </div>
 
-      <div class="dropdown-divider mb-5"></div>
+        <div class="container collapse multi-collapse mb-4 {% if error %} show {% endif %}"
+             id="container-add-question">
+            <main class="form rounded shadow">
+                <form class="form-validation" method="post" novalidate
+                      action="{{ url_for('questions', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}">
+                    <h1 class="h3 mb-3 fw-normal text-center">Nova questão</h1>
+                    <div class="form-floating mb-2">
+                        {% if form.title.errors %}
+                            {{ form.title(class='form-control is-invalid', placeholder='Título da questão') }}
+                        {% else %}
+                            {{ form.title(class='form-control', placeholder='Título da questão') }}
+                        {% endif %}
+                        {{ form.title.label }}
 
-    {% include 'display_questions.html' %}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-floating mb-2">
+                        {% if form.body.errors %}
+                            {{ form.body(class='form-control is-invalid', placeholder='Enunciado') }}
+                        {% else %}
+                            {{ form.body(class='form-control', placeholder='Enunciado') }}
+                        {% endif %}
+                        {{ form.body.label }}
+
+                        {% if form.body.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.body.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-floating mb-2">
+                        {{ form.support_material(class='form-control', placeholder='Material de apoio') }}
+                        {{ form.support_material.label }}
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        {% if form.choice_a.errors %}
+                            {{ form.choice_a(class='form-control is-invalid', placeholder='Alternativa A') }}
+                        {% else %}
+                            {{ form.choice_a(class='form-control', placeholder='Alternativa A') }}
+                        {% endif %}
+                        {{ form.choice_a.label }}
+
+                        {% if form.choice_a.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.choice_a.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        {% if form.choice_b.errors %}
+                            {{ form.choice_b(class='form-control is-invalid', placeholder='Alternativa B') }}
+                        {% else %}
+                            {{ form.choice_b(class='form-control', placeholder='Alternativa B') }}
+                        {% endif %}
+                        {{ form.choice_b.label }}
+
+                        {% if form.choice_b.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.choice_b.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        {% if form.choice_c.errors %}
+                            {{ form.choice_c(class='form-control is-invalid', placeholder='Alternativa C') }}
+                        {% else %}
+                            {{ form.choice_c(class='form-control', placeholder='Alternativa C') }}
+                        {% endif %}
+                        {{ form.choice_c.label }}
+
+                        {% if form.choice_c.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.choice_c.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        {% if form.choice_d.errors %}
+                            {{ form.choice_d(class='form-control is-invalid', placeholder='Alternativa D') }}
+                        {% else %}
+                            {{ form.choice_d(class='form-control', placeholder='Alternativa D') }}
+                        {% endif %}
+                        {{ form.choice_d.label }}
+
+                        {% if form.choice_d.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.choice_d.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-floating mb-2 col-4">
+                        {{ form.right_answer(class='form-select', placeholder='Resposta correta') }}
+                        {{ form.right_answer.label }}
+                    </div>
+
+                    <div class="form-floating mb-3 col-3">
+                        {{ form.difficulty(class='form-select', placeholder='Dificuldade') }}
+                        {{ form.difficulty.label }}
+                    </div>
+                    <button class="btn btn-lg btn-success" type="submit">
+                        Criar nova questão
+                    </button>
+                </form>
+            </main>
+        </div>
+
+        <div class="dropdown-divider mb-5"></div>
+
+        {% include 'display_questions.html' %}
 
     {% endif %}
 
