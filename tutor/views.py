@@ -7,18 +7,19 @@ from .forms import RegistrationForm, LoginForm, EditProfileForm, CourseClassForm
 app = Flask(__name__)
 app.secret_key = urandom(24)
 
-
-# TODO #1 terminar parte do aluno
-# TODO #2 campos extrar dos relacionamentos (questão criada em/alterada em, questão respondida em/alterada em etc.)
-# TODO #3 aceitar múltiplos assuntos anteriores/posteriores
-# TODO #4 o que vai ter no Ver Perfil?
-# TODO #5 criar cursos. só admin pode criar cursos. disciplinas ligadas a um curso. professor pode estar ligado a vários cursos.
-# TODO #6 limpar código. retirar funções legadas do exemplo
-# TODO #7 colocar algo na tela principal do professor. últimas respostas? algum gráfico?
-# TODO #8 colocar algo na tela principal do estudante. últimas respostas? perguntas/assuntos que outras pessoas da mesma turma estão respondendo?
-# TODO #9 revisar todas as rotas. não deixar entrar nas rotas que não pode.
-# TODO #10 papel e funções de administrador. mudar papeis dos usuários, cadastrar cursos.
-# TODO #11 dockerizar
+# TODO Labels pra estudante/professor?
+# TODO usar Blueprints?
+# TODO terminar parte do aluno
+# TODO campos extrar dos relacionamentos (questão criada em/alterada em, questão respondida em/alterada em etc.)
+# TODO aceitar múltiplos assuntos anteriores/posteriores
+# TODO o que vai ter no Ver Perfil?
+# TODO criar cursos. só admin pode criar cursos. disciplinas ligadas a um curso. professor pode estar ligado a vários cursos.
+# TODO limpar código. retirar funções legadas do exemplo
+# TODO colocar algo na tela principal do professor. últimas respostas? algum gráfico?
+# TODO colocar algo na tela principal do estudante. últimas respostas? perguntas/assuntos que outras pessoas da mesma turma estão respondendo?
+# TODO revisar todas as rotas. não deixar entrar nas rotas que não pode.
+# TODO papel e funções de administrador. mudar papeis dos usuários, cadastrar cursos.
+# TODO dockerizar
 
 
 @app.route('/')

@@ -1,9 +1,10 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
 from datetime import datetime
 from bcrypt import checkpw
+from os import environ
 import uuid
 
-graph = Graph("http://localhost:7474", auth=("neo4j", "admin"))
+graph = Graph(environ['DB_URL'], auth=(environ['DB_USERNAME'], environ['DB_PASSWORD']))
 matcher = NodeMatcher(graph)
 
 
@@ -21,16 +22,16 @@ class Person:
             self.password = node_user['password']
             self.type = node_user['type']
 
-    def find(self):
-        return matcher.match("Person", username=self.username).first()
+    def find(self, label='Person'):
+        return matcher.match(label, username=self.username).first()
 
-    def register(self, name, password, email, p_type):
+    def register(self, name, password, email, p_type, label='Student'):
         if not self.find():
             user = Node("Person", name=name, username=self.username, password=password, email=email, type=p_type)
+            user.add_label(label)
             graph.create(user)
             return True
-        else:
-            return False
+        return False
 
     def edit_personal_data(self, name, email):
         query = '''
@@ -57,8 +58,7 @@ class Person:
         if user:
             if checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
                 return user
-            else:
-                return False
+            return False
         return False
 
 
