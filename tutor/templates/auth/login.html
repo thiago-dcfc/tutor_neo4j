@@ -2,7 +2,7 @@
 {% block body %}
     <div class="container">
         <main class="form-signin rounded shadow">
-            <form action="{{ url_for('login') }}" method="post">
+            <form action="{{ url_for('auth.login') }}" method="post">
                 <h1 class="h3 mb-3 fw-normal text-center">Faça login</h1>
 
                 <div class="form-floating">
@@ -23,7 +23,7 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="form-floating">
+                <div class="form-floating mb-3">
                     {% if form.password.errors %}
                         {{ form.password(class='form-control is-invalid',
                                 placeholder='Senha') }}
@@ -42,11 +42,11 @@
                     {% endif %}
                 </div>
 
-                <div class="checkbox mb-3 mt-2">
-                    <label>
-                        <input type="checkbox" value="remember-me"> Lembrar de mim
-                    </label>
-                </div>
+{#                <div class="checkbox mb-3 mt-2">#}
+{#                    <label>#}
+{#                        <input type="checkbox" value="remember-me"> Lembrar de mim#}
+{#                    </label>#}
+{#                </div>#}
                 <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
             </form>
         </main>

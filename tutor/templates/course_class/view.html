@@ -24,7 +24,7 @@
         <div class="container collapse multi-collapse mb-4 {% if error %} show {% endif %}"
              id="container-add-course-class">
             <main class="form-signin rounded shadow">
-                <form action="{{ url_for('course_classes') }}" method="post">
+                <form action="{{ url_for('course_classes.view') }}" method="post">
                     <h1 class="h3 mb-3 fw-normal text-center">Nova disciplina</h1>
                     <div class="form-floating">
                         {% if form.title.errors %}
@@ -53,7 +53,7 @@
 
         <div class="dropdown-divider mb-5"></div>
 
-        {% include 'display_course_class.html' %}
+        {% include 'course_class/list.html' %}
 
     {% endif %}
 

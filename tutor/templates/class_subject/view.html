@@ -9,7 +9,7 @@
                     <a class="link-dark" href="{{ url_for('index') }}">Home</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a class="link-dark" href="{{ url_for('course_classes') }}">Minhas Disciplinas</a>
+                    <a class="link-dark" href="{{ url_for('course_classes.view') }}">Minhas Disciplinas</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
                     Assuntos de {{ course_class['title'] }}
@@ -21,7 +21,7 @@
                     data-bs-toggle="collapse" data-bs-target="#container-add-class-subject">
                 <i class="fas fa-plus"></i>&nbsp; Adicionar assunto
             </button>
-            <a class="btn btn-lg btn-secondary m-2 shadow" href="{{ url_for('course_classes') }}">
+            <a class="btn btn-lg btn-secondary m-2 shadow" href="{{ url_for('course_classes.view') }}">
                 <i class="fas fa-arrow-left"></i>&nbsp; Voltar à lista de disciplinas
             </a>
         </div>
@@ -29,7 +29,7 @@
         <div class="container collapse multi-collapse mb-4 {% if error %} show {% endif %}"
              id="container-add-class-subject">
             <main class="form rounded shadow">
-                <form action="{{ url_for('class_subjects', cc_identity=course_class['id']) }}"
+                <form action="{{ url_for('class_subjects.view', cc_identity=course_class['id']) }}"
                       method="post">
                     <h1 class="h3 mb-3 fw-normal text-center">Novo assunto</h1>
                     <div class="form-floating mb-2">
@@ -71,7 +71,7 @@
 
         <div class="dropdown-divider mb-5"></div>
 
-        {% include 'display_class_subjects.html' %}
+        {% include 'class_subject/list.html' %}
 
     {% endif %}
 

@@ -14,20 +14,20 @@
             {% for row in course_classes %}
                 <tr>
                     <td>
-                        <a class="link-dark" href="{{ url_for('class_subjects', cc_identity=row.cc.id) }}">
+                        <a class="link-dark" href="{{ url_for('class_subjects.view', cc_identity=row.cc.id) }}">
                             {{ row.cc.title }}
                         </a>
                     </td>
                     <td class="text-center">
-                        <form action="{{ url_for('delete_course_class', cc_identity=row.cc.id) }}"
+                        <form action="{{ url_for('course_classes.delete', cc_identity=row.cc.id) }}"
                             method="post">
                             <a class="btn btn-info btn-sm shadow-sm m-1"
-                               href="{{ url_for('class_subjects', cc_identity=row.cc.id) }}">
+                               href="{{ url_for('class_subjects.view', cc_identity=row.cc.id) }}">
                                 <i class="fas fa-eye"></i>
                             </a>
 
                             <a class="btn btn-success btn-sm shadow-sm m-1"
-                               href="{{ url_for('edit_course_class', cc_identity=row.cc.id) }}">
+                               href="{{ url_for('course_classes.edit', cc_identity=row.cc.id) }}">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button class="btn btn-danger btn-sm shadow-sm m-1 delete-course-class"

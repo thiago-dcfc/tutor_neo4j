@@ -1,7 +1,5 @@
-from tutor import app
-from commands import seeds_blueprint
-
-app.register_blueprint(seeds_blueprint)
+from tutor import create_app
 
 if __name__ == "__main__":
+    app = create_app()
     app.run(port=5000)

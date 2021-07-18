@@ -2,7 +2,7 @@
 {% block body %}
     <div class="container">
         <main class="form-signin rounded shadow">
-            <form action="{{ url_for('register') }}" method="post">
+            <form action="{{ url_for('auth.register') }}" method="post">
                 <h1 class="h3 mb-3 fw-normal text-center">Registro de Aluno</h1>
                 <div class="form-floating">
                     {% if form.name.errors %}

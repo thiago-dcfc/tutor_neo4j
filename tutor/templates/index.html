@@ -4,13 +4,13 @@
     <div class="container-fluid py-5">
       <h1 class="display-5 fw-bold">Tutor Utilizando Base de Dados em Grafo</h1>
       {% if session.username %}
-        <p class="col-md-8 fs-4">{{ 'Professor' if session.type == 'teacher' else 'Aluno' }}, utilize os menus acima para executar funções</p>
+        <p class="col-md-8 fs-4">Olá {{ session.name }}, utilize os menus acima para executar funções</p>
       {% else %}
         <p class="col-md-8 fs-4">Olá, Visitante! Por favor, realize o login ou cadastre-se!</p>
-        <a class="btn btn-success btn-lg align-middle shadow" href="{{ url_for('login') }}">
+        <a class="btn btn-success btn-lg align-middle shadow" href="{{ url_for('auth.login') }}">
           Entrar <i class="bi bi-arrow-up"></i>
         </a>
-        <a class="btn btn-primary btn-lg align-middle shadow" href="{{ url_for('register') }}">
+        <a class="btn btn-primary btn-lg align-middle shadow" href="{{ url_for('auth.register') }}">
           Cadastrar <i class="bi bi-arrow-right"></i>
         </a>
       {% endif %}

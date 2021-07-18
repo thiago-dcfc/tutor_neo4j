@@ -4,7 +4,7 @@
         <div class="container">
             <main class="form rounded shadow">
                 <form class="needs-validation" novalidate method="post"
-                      action="{{ url_for('edit_question', cc_identity=course_class['id'],
+                      action="{{ url_for('questions.edit', cc_identity=course_class['id'],
                                                            cs_identity=class_subject['id'],
                                                            question_identity=question.id) }}">
                     <h1 class="h3 mb-3 fw-normal text-center">Alterar Questão</h1>
@@ -132,7 +132,7 @@
                         </div>
                         <div class="col-6">
                             <a class="w-100 btn btn-lg btn-secondary"
-                               href="{{ url_for('questions', cc_identity=course_class['id'],
+                               href="{{ url_for('questions.view', cc_identity=course_class['id'],
                                                 cs_identity=class_subject['id']) }}">
                                 Cancelar
                             </a>

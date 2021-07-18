@@ -10,10 +10,10 @@
                     <a class="link-dark" href="{{ url_for('index') }}">Home</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a class="link-dark" href="{{ url_for('course_classes') }}">Minhas Disciplinas</a>
+                    <a class="link-dark" href="{{ url_for('course_classes.view') }}">Minhas Disciplinas</a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a class="link-dark" href="{{ url_for('class_subjects', cc_identity=course_class['id']) }}">
+                    <a class="link-dark" href="{{ url_for('class_subjects.view', cc_identity=course_class['id']) }}">
                         Assuntos de {{ course_class['title'] }}
                     </a>
                 </li>
@@ -28,7 +28,7 @@
                 <i class="fas fa-plus"></i>&nbsp; Adicionar questão
             </button>
             <a class="btn btn-lg btn-secondary m-2 shadow"
-               href="{{ url_for('class_subjects', cc_identity=course_class['id']) }}">
+               href="{{ url_for('class_subjects.view', cc_identity=course_class['id']) }}">
                 <i class="fas fa-arrow-left"></i>&nbsp; Voltar à lista de assuntos
             </a>
         </div>
@@ -37,7 +37,7 @@
              id="container-add-question">
             <main class="form rounded shadow">
                 <form class="form-validation" method="post" novalidate
-                      action="{{ url_for('questions', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}">
+                      action="{{ url_for('questions.view', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}">
                     <h1 class="h3 mb-3 fw-normal text-center">Nova questão</h1>
                     <div class="form-floating mb-2">
                         {% if form.title.errors %}
@@ -161,7 +161,7 @@
 
         <div class="dropdown-divider mb-5"></div>
 
-        {% include 'display_questions.html' %}
+        {% include 'question/list.html' %}
 
     {% endif %}
 

@@ -4,7 +4,7 @@
     {% if session.username %}
         <div class="container">
             <main class="form-signin rounded shadow">
-                <form action="{{ url_for('edit_course_class', cc_identity=course_class['id']) }}"
+                <form action="{{ url_for('course_classes.edit', cc_identity=course_class['id']) }}"
                       class="needs-validation" method="post" novalidate>
                     <h1 class="h3 mb-3 fw-normal text-center">Alterando Disciplina</h1>
                     <div class="form-floating">
@@ -32,7 +32,7 @@
                         </div>
                         <div class="col-6">
                             <a class="w-100 btn btn-lg btn-secondary"
-                               href="{{ url_for('course_classes') }}">
+                               href="{{ url_for('course_classes.view') }}">
                                 Cancelar
                             </a>
                         </div>
