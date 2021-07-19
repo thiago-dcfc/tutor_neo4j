@@ -5,6 +5,8 @@ from tutor.models.answer import Answer
 from flask import request, session, redirect, url_for, render_template, flash, abort, Blueprint
 from tutor.forms import QuestionForm
 from tutor.auth import teacher_only, student_only
+from flask_paginate import get_page_parameter
+from .pagination import get_skip, get_per_page, default_pagination
 
 bp = Blueprint('questions', __name__, url_prefix='/questions')
 
@@ -15,11 +17,18 @@ bp = Blueprint('questions', __name__, url_prefix='/questions')
 @bp.route('/view/<cc_identity>/<cs_identity>', methods=['GET', 'POST'])
 @teacher_only
 def view(cc_identity, cs_identity):
+    q = request.args.get('q') if request.args.get('q') else ''
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+
     course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
     class_subject = ClassSubject().find_in_course(cc_identity, cs_identity)
     if course_class and class_subject:
+        total = len(list(Question().get_questions(cc_identity, cs_identity, q)))
+        all_questions = list(Question().get_questions_with_pagination(cc_identity, cs_identity,
+                                                                      get_skip(page), get_per_page(), q))
+        pagination = default_pagination(page, total, q)
+
         form = QuestionForm(request.form)
-        all_questions = list(Question().get_questions(cc_identity, cs_identity))
         form.difficulty.choices = get_difficulty_choices()
         form.right_answer.choices = get_right_answer_choices()
 
@@ -43,7 +52,8 @@ def view(cc_identity, cs_identity):
                                class_subject=class_subject,
                                questions=all_questions,
                                form=form,
-                               error=error)
+                               error=error,
+                               pagination=pagination)
     abort(404)
 
 

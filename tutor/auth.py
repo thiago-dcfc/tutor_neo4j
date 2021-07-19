@@ -68,10 +68,14 @@ def logout():
 ############################
 #   UTIL AND VALIDATIONS   #
 ############################
-def is_teacher():
-    logged_in()
-    if 'Teacher' not in session.get('type'):
-        abort(403)
+def admin_only(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        logged_in()
+        if 'Administrator' not in session.get('type'):
+            abort(403)
+        return view(**kwargs)
+    return wrapped_view
 
 
 def teacher_only(view):
@@ -82,12 +86,6 @@ def teacher_only(view):
             abort(403)
         return view(**kwargs)
     return wrapped_view
-
-
-def is_student():
-    logged_in()
-    if 'Student' not in session.get('type'):
-        abort(403)
 
 
 def student_only(view):

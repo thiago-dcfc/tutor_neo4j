@@ -23,9 +23,15 @@
 
         <div class="container collapse multi-collapse mb-4 {% if error %} show {% endif %}"
              id="container-add-course-class">
-            <main class="form-signin rounded shadow">
-                <form action="{{ url_for('course_classes.view') }}" method="post">
+            <main class="form-m rounded shadow">
+                <form action="{{ url_for('course_classes.view') }}"
+                      method="post" class="needs-validation" novalidate>
                     <h1 class="h3 mb-3 fw-normal text-center">Nova disciplina</h1>
+                    <div class="form-floating mb-2">
+                        {{ form.course(class='form-select',
+                            placeholder='Curso') }}
+                        {{ form.course.label }}
+                    </div>
                     <div class="form-floating">
                         {% if form.title.errors %}
                             {{ form.title(class='form-control is-invalid',

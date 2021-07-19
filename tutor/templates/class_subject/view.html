@@ -30,7 +30,7 @@
              id="container-add-class-subject">
             <main class="form rounded shadow">
                 <form action="{{ url_for('class_subjects.view', cc_identity=course_class['id']) }}"
-                      method="post">
+                      method="post" class="needs-validation" novalidate>
                     <h1 class="h3 mb-3 fw-normal text-center">Novo assunto</h1>
                     <div class="form-floating mb-2">
                         {% if form.title.errors %}

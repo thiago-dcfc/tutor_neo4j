@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    {% if session.username %}
+        <div class="mb-3 fw-normal text-center">
+            <h1>Cursos</h1>
+            <ol class="breadcrumb small mx-auto justify-content-center">
+                <li class="breadcrumb-item">
+                    <a class="link-dark" href="{{ url_for('index') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Cursos
+                </li>
+            </ol>
+        </div>
+
+        <div class="mb-4 text-center">
+            <button class="btn btn-lg btn-primary shadow" id="add-course"
+                    data-bs-toggle="collapse" data-bs-target="#container-add-course">
+                <i class="fas fa-plus"></i>&nbsp; Adicionar curso
+            </button>
+        </div>
+
+        <div class="container collapse multi-collapse mb-4 {% if error %} show {% endif %}"
+             id="container-add-course">
+            <main class="form-signin rounded shadow">
+                <form action="{{ url_for('courses.view') }}"
+                      method="post" class="needs-validation" novalidate>
+                    <h1 class="h3 mb-3 fw-normal text-center">Novo curso</h1>
+                    <div class="form-floating">
+                        {% if form.name.errors %}
+                            {{ form.name(class='form-control is-invalid',
+                                placeholder='Nome do curso') }}
+                        {% else %}
+                            {{ form.name(class='form-control',
+                                placeholder='Nome do curso') }}
+                        {% endif %}
+                        {{ form.name.label }}
+
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="form-floating">
+                        {% if form.initials.errors %}
+                            {{ form.initials(class='form-control is-invalid',
+                                placeholder='Sigla') }}
+                        {% else %}
+                            {{ form.initials(class='form-control',
+                                placeholder='Sigla') }}
+                        {% endif %}
+                        {{ form.initials.label }}
+
+                        {% if form.initials.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.initials.errors %}
+                                    {{ error }}<br/>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button class="w-100 btn btn-lg btn-success mt-3" type="submit">
+                        Criar novo curso
+                    </button>
+                </form>
+            </main>
+        </div>
+
+        <div class="dropdown-divider mb-5"></div>
+
+        {% include 'course/list.html' %}
+
+    {% endif %}
+
+{% endblock %}

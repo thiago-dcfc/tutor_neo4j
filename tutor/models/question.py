@@ -60,14 +60,27 @@ class Question:
         return True
 
     # Retorna uma questão atráves do título da Disciplina e do título do Assunto
-    def get_questions(self, cc_identity, cs_identity):
+    def get_questions(self, cc_identity, cs_identity, search=''):
         query = '''
                 MATCH (q:Question)-[:ASKED]->(cs:ClassSubject)-[:TAUGHT]->(cc:CourseClass)
-                WHERE cs.id = $cs_identity and cc.id = $cc_identity
+                WHERE cs.id = $cs_identity AND cc.id = $cc_identity
+                AND toLower(q.title) CONTAINS toLower($search)
                 RETURN q
                 ORDER BY q.title
                 '''
-        return graph.run(query, cc_identity=cc_identity, cs_identity=cs_identity)
+        return graph.run(query, cc_identity=cc_identity, cs_identity=cs_identity, search=search)
+
+    def get_questions_with_pagination(self, cc_identity, cs_identity, skip, limit, search=''):
+        query = '''
+                MATCH (q:Question)-[:ASKED]->(cs:ClassSubject)-[:TAUGHT]->(cc:CourseClass)
+                WHERE cs.id = $cs_identity AND cc.id = $cc_identity
+                AND toLower(q.title) CONTAINS toLower($search)
+                RETURN q
+                ORDER BY q.title
+                SKIP $skip
+                LIMIT $limit
+                '''
+        return graph.run(query, cc_identity=cc_identity, cs_identity=cs_identity, skip=skip, limit=limit, search=search)
 
     def get_question(self, question_id):
         query = '''

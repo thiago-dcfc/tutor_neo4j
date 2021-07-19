@@ -36,6 +36,12 @@
                                href="{{ url_for('course_classes.student') }}">Disciplinas</a>
                         </li>
                     {% endif %}
+                    {% if 'Administrator' in session.type %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if '/courses' in request.path %}active{% endif %}"
+                               href="{{ url_for('courses.view') }}">Cursos</a>
+                        </li>
+                    {% endif %}
                 {% endif %}
             </ul>
 

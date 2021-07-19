@@ -4,7 +4,8 @@
     {% if session.username %}
         <div class="container">
             <main class="form rounded shadow">
-                <form class="needs-validation" novalidate>
+                <form class="needs-validation" novalidate method="post"
+                      action="{{ url_for('class_subjects.edit', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}">
                     <h1 class="h3 mb-3 fw-normal text-center">Alterar Assunto</h1>
                     <div class="form-floating mb-2">
                         {% if form.title.errors %}
@@ -46,9 +47,7 @@
 
                     <div class="row">
                         <div class="col-6">
-                            <button class="w-100 btn btn-lg btn-success" type="submit"
-                                    formaction="{{ url_for('class_subjects.edit', cc_identity=course_class['id'], cs_identity=class_subject['id']) }}"
-                                    formmethod="post">
+                            <button class="w-100 btn btn-lg btn-success" type="submit">
                                 Alterar
                             </button>
                         </div>

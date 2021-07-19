@@ -3,11 +3,11 @@
 
     {% if session.username %}
         <div class="container">
-            <main class="form-signin rounded shadow">
+            <main class="form-m rounded shadow">
                 <form action="{{ url_for('course_classes.edit', cc_identity=course_class['id']) }}"
                       class="needs-validation" method="post" novalidate>
                     <h1 class="h3 mb-3 fw-normal text-center">Alterando Disciplina</h1>
-                    <div class="form-floating">
+                    <div class="form-floating mb-2">
                         {% if form.title.errors %}
                             {{ form.title(class='form-control is-invalid',
                                 placeholder='Nome da disciplina') }}
@@ -24,6 +24,11 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
+                    </div>
+                    <div class="form-floating">
+                        {{ form.course(class='form-select',
+                            placeholder='Nome da disciplina') }}
+                        {{ form.course.label }}
                     </div>
                     <div class="row mt-3">
                         <div class="col-6">

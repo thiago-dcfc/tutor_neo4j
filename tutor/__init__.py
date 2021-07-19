@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, session
 from os import urandom
 from commands import seeds_blueprint
-from tutor import auth, profile, course_classes, class_subjects, questions, routes
+from tutor import auth, profile, course_classes, class_subjects, questions, routes, courses
 
 
 def create_app():
@@ -15,6 +15,7 @@ def create_app():
     app.register_blueprint(course_classes.bp)
     app.register_blueprint(class_subjects.bp)
     app.register_blueprint(questions.bp)
+    app.register_blueprint(courses.bp)
 
     @app.errorhandler(404)
     def not_found(error):

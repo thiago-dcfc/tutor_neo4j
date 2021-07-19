@@ -46,7 +46,7 @@ class ClassSubject:
                 RETURN cs
                 ORDER BY cs.order
                 '''
-        return graph.run(query, cc_identity=cc_identity, title=title, cs_identity=cs_identity)
+        return graph.evaluate(query, cc_identity=cc_identity, title=title, cs_identity=cs_identity)
 
     # Retorna o valor do campo 'initial' de um Assunto específco
     def get_initial_value(self, cc_identity, cs_identity):
@@ -120,7 +120,7 @@ class ClassSubject:
         return False
 
     def edit(self, cc_identity, cs_identity, subject_title, previous_subject, next_subject, support_material, initial):
-        if not self.find_in_course_by_title_not_current(cc_identity, subject_title, cs_identity).evaluate():
+        if not self.find_in_course_by_title_not_current(cc_identity, subject_title, cs_identity):
             query = '''
                     MATCH (cc:CourseClass {id: $cc_identity})
                     OPTIONAL MATCH (cs:ClassSubject {id: $cs_identity})
@@ -221,15 +221,29 @@ class ClassSubject:
                 '''
         return graph.run(query, title=cc_title)
 
-    def get_class_subjects_with_previous_and_forward(self, cc_identity):
+    def get_class_subjects_with_previous_and_forward(self, cc_identity, search=''):
         query = '''
                 MATCH (cs:ClassSubject)-[:TAUGHT]->(cc:CourseClass {id: $cc_identity})
+                WHERE toLower(cs.title) CONTAINS toLower($search)
+                OPTIONAL MATCH (cs)-[:FORWARD]->(ns:ClassSubject)
+                OPTIONAL MATCH (cs)-[:PREVIOUS]->(ps:ClassSubject)
+                RETURN cs, ns.title as ns_title, ps.title as ps_title
+                ORDER BY cs.title
+                '''
+        return graph.run(query, cc_identity=cc_identity, search=search)
+
+    def get_class_subjects_with_previous_and_forward_with_pagination(self, cc_identity, skip, limit, search=''):
+        query = '''
+                MATCH (cs:ClassSubject)-[:TAUGHT]->(cc:CourseClass {id: $cc_identity})
+                WHERE toLower(cs.title) CONTAINS toLower($search)
                 OPTIONAL MATCH (cs)-[:FORWARD]->(ns:ClassSubject)
                 OPTIONAL MATCH (cs)-[:PREVIOUS]->(ps:ClassSubject)
                 RETURN cs, ns.title as ns_title, ps.title as ps_title
                 ORDER BY cs.order
+                SKIP $skip
+                LIMIT $limit
                 '''
-        return graph.run(query, cc_identity=cc_identity)
+        return graph.run(query, cc_identity=cc_identity, skip=skip, limit=limit, search=search)
 
     def delete(self, cc_identity, cs_identity):
         if self.find_in_course(cc_identity, cs_identity):

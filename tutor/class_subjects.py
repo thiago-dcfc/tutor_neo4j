@@ -3,6 +3,8 @@ from tutor.models.course_class import CourseClass
 from flask import request, session, redirect, url_for, render_template, flash, abort, Blueprint
 from tutor.forms import ClassSubjectForm
 from tutor.auth import teacher_only
+from flask_paginate import get_page_parameter
+from .pagination import get_skip, get_per_page, default_pagination
 
 bp = Blueprint('class_subjects', __name__, url_prefix='/class_subjects')
 
@@ -13,11 +15,19 @@ bp = Blueprint('class_subjects', __name__, url_prefix='/class_subjects')
 @bp.route('/view/<cc_identity>', methods=['GET', 'POST'])
 @teacher_only
 def view(cc_identity):
+    q = request.args.get('q') if request.args.get('q') else ''
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+
     course_class = CourseClass().find_by_identity_and_user(cc_identity, session.get('username'))
     if course_class:
-        form = ClassSubjectForm(request.form)
-        course_class_subjects = list(ClassSubject().get_class_subjects_with_previous_and_forward(cc_identity))
+        total = len(list(ClassSubject().get_class_subjects_with_previous_and_forward(cc_identity, q)))
+        course_class_subjects = list(
+            ClassSubject().get_class_subjects_with_previous_and_forward_with_pagination(cc_identity,
+                                                                                        get_skip(page),
+                                                                                        get_per_page(), q))
+        pagination = default_pagination(page, total, q)
 
+        form = ClassSubjectForm(request.form)
         # populates all select fields with their respective choices
         form.previous_subject.choices = get_choices_with_empty_placeholder(course_class_subjects)
         form.next_subject.choices = get_choices_with_empty_placeholder(course_class_subjects)
@@ -38,7 +48,8 @@ def view(cc_identity):
                                course_class=course_class,
                                class_subjects=course_class_subjects,
                                form=form,
-                               error=error)
+                               error=error,
+                               pagination=pagination)
     abort(404)
 
 

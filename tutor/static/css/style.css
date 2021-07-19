@@ -35,6 +35,14 @@ textarea {
     background-color: white;
 }
 
+.form-m {
+    width: 100%;
+    max-width: 600px;
+    padding: 15px;
+    margin: auto;
+    background-color: white;
+}
+
 .img-404 {
     width: 80%;
 }
@@ -81,4 +89,20 @@ textarea {
 
 .breadcrumb-item.active {
     color: #858796;
+}
+
+.pagination-page-info {
+    text-align: center;
+    padding: .6em .6em .6em 0;
+    margin: .5em .5em .5em 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    text-align: center;
+    color: black;
+    padding: .1em .25em;
+}
+
+.pagination {
+    /*justify-content: center;*/
 }

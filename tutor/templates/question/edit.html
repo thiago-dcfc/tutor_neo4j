@@ -1,136 +1,167 @@
 {% extends "layout.html" %}
 {% block body %}
     {% if session.username %}
+        {% set tab_a = True %}
+        {% set tab_b = False %}
+        {% if form.title.errors or form.body.errors %}
+            {% set tab_a = True %}
+            {% set tab_b = False %}
+        {% elif form.choice_a.errors or form.choice_b.errors or form.choice_c.errors or form.choice_d.errors %}
+            {% set tab_a = False %}
+            {% set tab_b = True %}
+        {% endif %}
         <div class="container">
             <main class="form rounded shadow">
-                <form class="needs-validation" novalidate method="post"
+                <form method="post" novalidate
                       action="{{ url_for('questions.edit', cc_identity=course_class['id'],
                                                            cs_identity=class_subject['id'],
                                                            question_identity=question.id) }}">
                     <h1 class="h3 mb-3 fw-normal text-center">Alterar Questão</h1>
-                    <div class="form-floating mb-2">
-                        {% if form.title.errors %}
-                            {{ form.title(class='form-control is-invalid', placeholder='Título da questão') }}
-                        {% else %}
-                            {{ form.title(class='form-control', placeholder='Título da questão') }}
-                        {% endif %}
-                        {{ form.title.label }}
 
-                        {% if form.title.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.title.errors %}
-                                    {{ error }}<br/>
-                                {% endfor %}
+                    <div class="nav nav-pills mt-3 mb-3 justify-content-center" id="v-pills-tab" role="tablist">
+                        <a class="nav-link {% if tab_a %} active {% endif %}"
+                           id="v-general-tab" data-bs-toggle="pill" href="#v-general"
+                           role="tab" aria-controls="v-general"
+                           aria-selected="{% if tab_a %} true {% else %} false {% endif %}">Geral</a>
+                        <a class="nav-link {% if tab_b %} active {% endif %}"
+                           id="v-alternative-tab" data-bs-toggle="pill"
+                           href="#v-alternative" role="tab" aria-controls="v-alternative"
+                           aria-selected="{% if tab_b %} true {% else %} false {% endif %}">Alternativas</a>
+                    </div>
+
+                    <div class="tab-content flex-grow-1" id="tab-content">
+                        <div id="v-general" role="tabpanel"
+                             class="tab-pane fade {% if tab_a %} show active {% else %} hide {% endif %}"
+                             aria-labelledby="v-general-tab">
+                            <div class="form-floating mb-2">
+                                {% if form.title.errors %}
+                                    {{ form.title(class='form-control is-invalid', placeholder='Título da questão') }}
+                                {% else %}
+                                    {{ form.title(class='form-control', placeholder='Título da questão') }}
+                                {% endif %}
+                                {{ form.title.label }}
+
+                                {% if form.title.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.title.errors %}
+                                            {{ error }}<br/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                    </div>
 
-                    <div class="form-floating mb-2">
-                        {% if form.body.errors %}
-                            {{ form.body(class='form-control is-invalid', placeholder='Enunciado') }}
-                        {% else %}
-                            {{ form.body(class='form-control', placeholder='Enunciado') }}
-                        {% endif %}
-                        {{ form.body.label }}
+                            <div class="form-floating mb-2">
+                                {% if form.body.errors %}
+                                    {{ form.body(class='form-control is-invalid', placeholder='Enunciado') }}
+                                {% else %}
+                                    {{ form.body(class='form-control', placeholder='Enunciado') }}
+                                {% endif %}
+                                {{ form.body.label }}
 
-                        {% if form.body.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.body.errors %}
-                                    {{ error }}<br/>
-                                {% endfor %}
+                                {% if form.body.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.body.errors %}
+                                            {{ error }}<br/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                    </div>
-                    <div class="form-floating mb-2">
-                        {{ form.support_material(class='form-control', placeholder='Material de apoio') }}
-                        {{ form.support_material.label }}
-                    </div>
-
-                    <div class="form-floating mb-2">
-                        {% if form.choice_a.errors %}
-                            {{ form.choice_a(class='form-control is-invalid', placeholder='Alternativa A') }}
-                        {% else %}
-                            {{ form.choice_a(class='form-control', placeholder='Alternativa A') }}
-                        {% endif %}
-                        {{ form.choice_a.label }}
-
-                        {% if form.choice_a.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.choice_a.errors %}
-                                    {{ error }}<br/>
-                                {% endfor %}
+                            <div class="form-floating mb-2">
+                                {{ form.support_material(class='form-control', placeholder='Material de apoio') }}
+                                {{ form.support_material.label }}
                             </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="form-floating mb-2">
-                        {% if form.choice_b.errors %}
-                            {{ form.choice_b(class='form-control is-invalid', placeholder='Alternativa B') }}
-                        {% else %}
-                            {{ form.choice_b(class='form-control', placeholder='Alternativa B') }}
-                        {% endif %}
-                        {{ form.choice_b.label }}
-
-                        {% if form.choice_b.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.choice_b.errors %}
-                                    {{ error }}<br/>
-                                {% endfor %}
+                            <div class="form-floating mb-2 col-3">
+                                {{ form.difficulty(class='form-select', placeholder='Dificuldade') }}
+                                {{ form.difficulty.label }}
                             </div>
-                        {% endif %}
-                    </div>
+                        </div>
 
-                    <div class="form-floating mb-2">
-                        {% if form.choice_c.errors %}
-                            {{ form.choice_c(class='form-control is-invalid', placeholder='Alternativa C') }}
-                        {% else %}
-                            {{ form.choice_c(class='form-control', placeholder='Alternativa C') }}
-                        {% endif %}
-                        {{ form.choice_c.label }}
+                        <div class="tab-pane fade {% if tab_b %} show active {% endif %}"
+                             id="v-alternative" role="tabpanel"
+                             aria-labelledby="v-alternative-tab">
+                            <div class="form-floating mb-2">
+                                {% if form.choice_a.errors %}
+                                    {{ form.choice_a(class='form-control is-invalid', placeholder='Alternativa A') }}
+                                {% else %}
+                                    {{ form.choice_a(class='form-control', placeholder='Alternativa A') }}
+                                {% endif %}
+                                {{ form.choice_a.label }}
 
-                        {% if form.choice_c.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.choice_c.errors %}
-                                    {{ error }}<br/>
-                                {% endfor %}
+                                {% if form.choice_a.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.choice_a.errors %}
+                                            {{ error }}<br/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                    </div>
 
-                    <div class="form-floating mb-2">
-                        {% if form.choice_d.errors %}
-                            {{ form.choice_d(class='form-control is-invalid', placeholder='Alternativa D') }}
-                        {% else %}
-                            {{ form.choice_d(class='form-control', placeholder='Alternativa D') }}
-                        {% endif %}
-                        {{ form.choice_d.label }}
+                            <div class="form-floating mb-2">
+                                {% if form.choice_b.errors %}
+                                    {{ form.choice_b(class='form-control is-invalid', placeholder='Alternativa B') }}
+                                {% else %}
+                                    {{ form.choice_b(class='form-control', placeholder='Alternativa B') }}
+                                {% endif %}
+                                {{ form.choice_b.label }}
 
-                        {% if form.choice_d.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.choice_d.errors %}
-                                    {{ error }}<br/>
-                                {% endfor %}
+                                {% if form.choice_b.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.choice_b.errors %}
+                                            {{ error }}<br/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+
+                            <div class="form-floating mb-2">
+                                {% if form.choice_c.errors %}
+                                    {{ form.choice_c(class='form-control is-invalid', placeholder='Alternativa C') }}
+                                {% else %}
+                                    {{ form.choice_c(class='form-control', placeholder='Alternativa C') }}
+                                {% endif %}
+                                {{ form.choice_c.label }}
+
+                                {% if form.choice_c.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.choice_c.errors %}
+                                            {{ error }}<br/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-floating mb-2">
+                                {% if form.choice_d.errors %}
+                                    {{ form.choice_d(class='form-control is-invalid', placeholder='Alternativa D') }}
+                                {% else %}
+                                    {{ form.choice_d(class='form-control', placeholder='Alternativa D') }}
+                                {% endif %}
+                                {{ form.choice_d.label }}
+
+                                {% if form.choice_d.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.choice_d.errors %}
+                                            {{ error }}<br/>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-floating mb-2 col-4">
+                                {{ form.right_answer(class='form-select', placeholder='Resposta correta') }}
+                                {{ form.right_answer.label }}
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-floating mb-2 col-4">
-                        {{ form.right_answer(class='form-select', placeholder='Resposta correta') }}
-                        {{ form.right_answer.label }}
-                    </div>
-
-                    <div class="form-floating mb-3 col-3">
-                        {{ form.difficulty(class='form-select', placeholder='Dificuldade') }}
-                        {{ form.difficulty.label }}
-                    </div>
 
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-6 mt-1">
                             <button class="w-100 btn btn-lg btn-success" type="submit">
                                 Alterar
                             </button>
                         </div>
-                        <div class="col-6">
+                        <div class="col-6 mt-1">
                             <a class="w-100 btn btn-lg btn-secondary"
                                href="{{ url_for('questions.view', cc_identity=course_class['id'],
                                                 cs_identity=class_subject['id']) }}">

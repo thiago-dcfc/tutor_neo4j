@@ -63,11 +63,27 @@ class EditProfileForm(Form):
 ###########################################
 #   COURSE CLASS FORM (create and edit)   #
 ###########################################
+class CourseForm(Form):
+    name = StringField('Nome do curso',
+                       [validators.Length(min=4, max=120,
+                                          message='Nome do curso deve possuir entre 4 e 120 caracteres'),
+                        validators.InputRequired(message=required_message)])
+
+    initials = StringField('Sigla',
+                           [validators.Length(min=1, max=10,
+                                              message='Sigla deve possuir entre 1 e 10 caracteres'),
+                            validators.InputRequired(message=required_message)])
+
+
+###########################################
+#   COURSE CLASS FORM (create and edit)   #
+###########################################
 class CourseClassForm(Form):
     title = StringField('Nome da disciplina',
                         [validators.Length(min=4, max=35,
                                            message='Nome da disciplina deve possuir entre 4 e 35 caracteres'),
                          validators.InputRequired(message=required_message)])
+    course = SelectField('Curso')
 
 
 ############################################
