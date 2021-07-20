@@ -20,3 +20,5 @@ build/
 
 _site/
 pyenv.cfg
+
+/tutor/static/node_modules/

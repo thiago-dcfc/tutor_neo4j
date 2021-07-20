@@ -65,7 +65,7 @@
                              class="tab-pane fade {% if tab_a %} show active {% else %} hide {% endif %}"
                              aria-labelledby="v-general-tab">
 
-                            <div class="form-floating mb-2">
+                            <div class="form-floating mb-3">
                                 {% if form.title.errors %}
                                     {{ form.title(class='form-control is-invalid', placeholder='Título da questão') }}
                                 {% else %}
@@ -81,13 +81,14 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="form-floating mb-2">
+                            <div class="dropdown-divider"></div>
+                            <div class="mb-3">
+                                {{ form.body.label(class='form-label') }}
                                 {% if form.body.errors %}
                                     {{ form.body(class='form-control is-invalid', placeholder='Enunciado') }}
                                 {% else %}
                                     {{ form.body(class='form-control', placeholder='Enunciado') }}
                                 {% endif %}
-                                {{ form.body.label }}
 
                                 {% if form.body.errors %}
                                     <div class="invalid-feedback">
@@ -97,27 +98,30 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="form-floating mb-2">
+                            <div class="dropdown-divider"></div>
+                            <div class="mb-2">
+                                {{ form.support_material.label(class='form-label') }}
                                 {{ form.support_material(class='form-control', placeholder='Material de apoio') }}
-                                {{ form.support_material.label }}
                             </div>
+                            <div class="dropdown-divider"></div>
 
                             <div class="form-floating mb-2 col-3">
                                 {{ form.difficulty(class='form-select', placeholder='Dificuldade') }}
                                 {{ form.difficulty.label }}
                             </div>
                         </div>
+
                         <div class="tab-pane fade {% if tab_b %} show active {% endif %}"
                              id="v-alternative" role="tabpanel"
                              aria-labelledby="v-alternative-tab">
-
-                            <div class="form-floating mb-2">
+                            <div class="dropdown-divider"></div>
+                            <div class="mb-3">
+                                {{ form.choice_a.label(class='form-label') }}
                                 {% if form.choice_a.errors %}
                                     {{ form.choice_a(class='form-control is-invalid', placeholder='Alternativa A') }}
                                 {% else %}
                                     {{ form.choice_a(class='form-control', placeholder='Alternativa A') }}
                                 {% endif %}
-                                {{ form.choice_a.label }}
 
                                 {% if form.choice_a.errors %}
                                     <div class="invalid-feedback">
@@ -127,14 +131,14 @@
                                     </div>
                                 {% endif %}
                             </div>
-
-                            <div class="form-floating mb-2">
+                            <div class="dropdown-divider"></div>
+                            <div class="mb-3">
+                                {{ form.choice_b.label(class='form-label') }}
                                 {% if form.choice_b.errors %}
                                     {{ form.choice_b(class='form-control is-invalid', placeholder='Alternativa B') }}
                                 {% else %}
                                     {{ form.choice_b(class='form-control', placeholder='Alternativa B') }}
                                 {% endif %}
-                                {{ form.choice_b.label }}
 
                                 {% if form.choice_b.errors %}
                                     <div class="invalid-feedback">
@@ -144,14 +148,14 @@
                                     </div>
                                 {% endif %}
                             </div>
-
-                            <div class="form-floating mb-2">
+                            <div class="dropdown-divider"></div>
+                            <div class="mb-3">
+                                {{ form.choice_c.label(class='form-label') }}
                                 {% if form.choice_c.errors %}
                                     {{ form.choice_c(class='form-control is-invalid', placeholder='Alternativa C') }}
                                 {% else %}
                                     {{ form.choice_c(class='form-control', placeholder='Alternativa C') }}
                                 {% endif %}
-                                {{ form.choice_c.label }}
 
                                 {% if form.choice_c.errors %}
                                     <div class="invalid-feedback">
@@ -161,14 +165,14 @@
                                     </div>
                                 {% endif %}
                             </div>
-
-                            <div class="form-floating mb-2">
+                            <div class="dropdown-divider"></div>
+                            <div class="mb-2">
+                                {{ form.choice_d.label(class='form-label') }}
                                 {% if form.choice_d.errors %}
                                     {{ form.choice_d(class='form-control is-invalid', placeholder='Alternativa D') }}
                                 {% else %}
                                     {{ form.choice_d(class='form-control', placeholder='Alternativa D') }}
                                 {% endif %}
-                                {{ form.choice_d.label }}
 
                                 {% if form.choice_d.errors %}
                                     <div class="invalid-feedback">
@@ -178,6 +182,7 @@
                                     </div>
                                 {% endif %}
                             </div>
+                            <div class="dropdown-divider"></div>
                             <div class="form-floating mb-2 col-4">
                                 {{ form.right_answer(class='form-select', placeholder='Resposta correta') }}
                                 {{ form.right_answer.label }}
@@ -196,6 +201,16 @@
 
         {% include 'question/list.html' %}
 
+        <script>
+            window.addEventListener('load', (event) => {
+                createCKEditor('body');
+                createCKEditor('support_material');
+                createCKEditor('choice_a');
+                createCKEditor('choice_b');
+                createCKEditor('choice_c');
+                createCKEditor('choice_d');
+            })
+        </script>
     {% endif %}
 
 {% endblock %}

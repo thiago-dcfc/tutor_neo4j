@@ -1,10 +1,9 @@
-from flask import session, redirect, url_for, render_template, Blueprint
+from flask import render_template, Blueprint
 
 bp = Blueprint('', __name__)
 
-# TODO CKEditor ou semelhante
 # TODO esqueceu a senha?
-# TODO terminar parte do aluno
+# TODO terminar parte do aluno (react?)
 # TODO campos extras dos relacionamentos (questão criada em/alterada em, questão respondida em/alterada em etc.)
 # TODO aceitar múltiplos assuntos anteriores/posteriores
 # TODO o que vai ter no Ver Perfil?
@@ -17,8 +16,4 @@ bp = Blueprint('', __name__)
 
 @bp.route('/')
 def index():
-    # session['username'] = 'sirlon'
-    # session['person_name'] = 'Sirlon'
-    # session['email'] = 'sirlon@sirlon.com'
-    # session['type'] = 'teacher'
     return render_template('index.html')

@@ -8,6 +8,11 @@ def create_app():
     app = Flask(__name__)
     app.secret_key = urandom(24)
 
+    # session['username'] = 'sirlon'
+    # session['person_name'] = 'Sirlon'
+    # session['email'] = 'sirlon@sirlon.com'
+    # session['type'] = 'teacher'
+
     app.register_blueprint(seeds_blueprint)
     app.register_blueprint(routes.bp)
     app.register_blueprint(auth.bp)

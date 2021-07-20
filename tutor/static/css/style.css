@@ -103,6 +103,6 @@ textarea {
     padding: .1em .25em;
 }
 
-.pagination {
-    /*justify-content: center;*/
+.form-label {
+    margin-left: 5px;
 }

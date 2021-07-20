@@ -27,15 +27,18 @@
                         {{ form.previous_subject(class='form-select', placeholder='Assunto anterior') }}
                         {{ form.previous_subject.label }}
                     </div>
-                    <div class="form-floating mb-2">
+                    <div class="form-floating mb-3">
                         {{ form.next_subject(class='form-select', placeholder='Assunto posterior') }}
                         {{ form.next_subject.label }}
                     </div>
-                    <div class="form-floating mb-3">
-                        {{ form.support_material(class='form-control', placeholder='Material de apoio') }}
-                        {{ form.support_material.label }}
+                    <div class="dropdown-divider"></div>
+                    <div class="mb-3">
+                        {{ form.support_material.label(class='form-label') }}
+                        {{ form.support_material(class='form-control', id='support_material',
+                                                 placeholder='Escreva aqui o conteúdo do material de apoio...') }}
                     </div>
-                    <div class="form-floating mb-3">
+                    <div class="dropdown-divider"></div>
+                    <div class="mb-3">
                         Assunto inicial?&nbsp;&nbsp;&nbsp;
                         {% for subfield in form.initial %}
                             <div class="form-check form-check-inline">
@@ -61,6 +64,12 @@
                 </form>
             </main>
         </div>
+
+        <script>
+            window.addEventListener('load', (event) => {
+                createCKEditor('support_material')
+            })
+        </script>
     {% endif %}
 
 {% endblock %}

@@ -50,3 +50,8 @@
     </div>
 {{ pagination.links }}
 </div>
+<script>
+    window.addEventListener('load', (event) => {
+      createDeletePrompt('.delete-question', 'a questão')
+    })
+</script>

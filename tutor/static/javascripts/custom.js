@@ -12,8 +12,8 @@ $('#messages-box').delay(3000).fadeOut(400);
         .forEach(function (form) {
             form.addEventListener('submit', function (event) {
                 if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
+                    event.preventDefault()
+                    event.stopPropagation()
                 }
 
                 form.classList.add('was-validated')
@@ -21,20 +21,16 @@ $('#messages-box').delay(3000).fadeOut(400);
         })
 })()
 
-$('.delete-course-class').click(function(){
-    return confirm("Tem certeza que deseja excluir a disciplina?");
-})
+function createDeletePrompt(element, text) {
+    $(element).click(function () {
+        return confirm("Tem certeza que deseja excluir " + text + "?");
+    })
+}
 
-$('.delete-class-subject').click(function(){
-    return confirm("Tem certeza que deseja excluir o assunto?");
-})
-
-$('.delete-question').click(function(){
-    return confirm("Tem certeza que deseja excluir a questão?");
-})
-
-// ClassicEditor
-//         .create( document.querySelector( '.editor' ) )
-//         .catch( error => {
-//             console.error( error );
-//         } );
+function createCKEditor(element) {
+    CKEDITOR.replace(element, {
+        extraPlugins: 'mathjax',
+        mathJaxLib: '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
+        height: 120
+    });
+}

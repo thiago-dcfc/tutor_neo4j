@@ -34,7 +34,7 @@
                                href="{{ url_for('courses.edit', c_identity=row.c.id) }}">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <button class="btn btn-danger btn-sm shadow-sm m-1 delete-course-class"
+                            <button class="btn btn-danger btn-sm shadow-sm m-1 delete-course"
                                     type="submit">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
@@ -51,3 +51,8 @@
     </div>
 {{ pagination.links }}
 </div>
+<script>
+    window.addEventListener('load', (event) => {
+      createDeletePrompt('.delete-course', 'o curso')
+    })
+</script>
