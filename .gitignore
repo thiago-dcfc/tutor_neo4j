@@ -22,3 +22,5 @@ _site/
 pyenv.cfg
 
 /tutor/static/node_modules/
+
+/neo4j

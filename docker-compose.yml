@@ -1,0 +1,20 @@
+version: '3'
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - '5000:5000'
+    command: sh -c "sleep 15 && flask run --host=0.0.0.0"
+
+  neo4j:
+    image: neo4j:latest
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./neo4j/data:/data
+    environment:
+      NEO4J_AUTH: neo4j/admin
+    command: neo4j start
